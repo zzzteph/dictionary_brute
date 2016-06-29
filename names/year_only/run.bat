@@ -1,0 +1,2 @@
+D:\hashcat\hashcat64.exe -d 1 -o hash.result --potfile-disable -m 0 test.hash -r years.rules ..\names.dic
+D:\hashcat\hashcat64.exe -d 1 -o hash.result --potfile-disable -m 0 test.hash -r years_separate.rules ..\names.dic
