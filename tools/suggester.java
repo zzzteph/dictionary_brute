@@ -118,9 +118,12 @@ public class suggester {
 		suggested_words.clear();
 		for (String tmp : dictionary) {
 			System.out.println(tmp);
-			for (String sep : ending) {
+			for (String sep : ending)
 				System.out.println(tmp + sep);
-			}
+
+			for (Integer i = 0; i < 100; i++)
+				System.out.println(tmp + i.toString());
+
 		}
 	}
 
