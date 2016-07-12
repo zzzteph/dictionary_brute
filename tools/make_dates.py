@@ -13,6 +13,15 @@
 ## month_4digits
 ## month_ddmmyy
 
+## 4digits_month
+## 3digits_month
+## spec_char_4digits_month
+## 1digit_spec_char_month
+## spec_char_yy_month
+## spec_char_yyyy_month
+## yyyy_spec_char_month
+## dst_dnd_drd_dth_ddst_ddnd_ddrd_ddth_month
+
 
 import sys
 import datetime
@@ -27,20 +36,20 @@ end_date = get_date(sys.argv[2])
 
 ## ddmmyy_month
 # step = datetime.timedelta(days=1)
+
 # with open("ddmmyy_month.rule", "a") as f:
 # 	while start_date < end_date:
 # 		ddmmyy_month = " ".join(['^%s' % i for i in list(start_date.strftime('%d%m%y'))[::-1]])
 # 		f.write("%s\n" % ddmmyy_month)
-
 # 		start_date += step
 
 ## month_ddmmyy
 step = datetime.timedelta(days=1)
+
 with open("month_ddmmyy.rule", "a") as f:
 	while start_date < end_date:
 		month_ddmmyy = " ".join(['$%s' % i for i in list(start_date.strftime('%d%m%y'))])
 		f.write("%s\n" % month_ddmmyy)
-
 		start_date += step
 
 ## dd_month_yy
@@ -50,11 +59,12 @@ with open("month_ddmmyy.rule", "a") as f:
 # while start_date < end_date:
 # 	tmp = start_date.strftime('%d-%y').split("-")
 # 	dd_month_yy = " ".join(['^%s' % i for i in list(tmp[0][::-1])] + ['$%s' % i for i in list(tmp[1])])
+# 	result.append(ddyy_month)
 # 	start_date += step
 
 # with open("dd_month_yy.rule", "a") as f:
 # 	for i in sorted(list(set(result))):
-# 		f.write("%s\n" % dd_month_yy)
+# 		f.write("%s\n" % i)
 		
 ## ddyy_month
 # result = []
