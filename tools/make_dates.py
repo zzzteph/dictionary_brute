@@ -10,8 +10,9 @@
 ## dd_month_spec_char
 ## month_yy
 ## month_yy_spec_char
-## month_dd_mm_yy
 ## month_4digits
+## month_ddmmyy
+
 
 import sys
 import datetime
@@ -25,20 +26,46 @@ if start_date.year >= 2000:
 end_date = get_date(sys.argv[2])
 
 ## ddmmyy_month
+# step = datetime.timedelta(days=1)
+# with open("ddmmyy_month.rule", "a") as f:
+# 	while start_date < end_date:
+# 		ddmmyy_month = " ".join(['^%s' % i for i in list(start_date.strftime('%d%m%y'))[::-1]])
+# 		f.write("%s\n" % ddmmyy_month)
+
+# 		start_date += step
+
+## month_ddmmyy
 step = datetime.timedelta(days=1)
-with open("ddmmyy_month.rule", "a") as f:
+with open("month_ddmmyy.rule", "a") as f:
 	while start_date < end_date:
-		ddmmyy_month = " ".join(['^%s' % i for i in list(start_date.strftime('%d%m%y'))[::-1]])
-		f.write("%s\n" % ddmmyy_month)
+		month_ddmmyy = " ".join(['$%s' % i for i in list(start_date.strftime('%d%m%y'))])
+		f.write("%s\n" % month_ddmmyy)
 
 		start_date += step
 
 ## dd_month_yy
-with open("dd_month_yy.rule", "a") as f:
-	while start_date < end_date:
-		tmp = start_date.strftime('%d-%y').split("-")
-		dd_month_yy = " ".join(['^%s' % i for i in list(tmp[0][::-1])] + ['$%s' % i for i in list(tmp[1])])
-		f.write("%s\n" % dd_month_yy)
-		need 'sort dates.txt | uniq'
+# result = []
+# step = datetime.timedelta(days=1)
 
-		start_date += step
+# while start_date < end_date:
+# 	tmp = start_date.strftime('%d-%y').split("-")
+# 	dd_month_yy = " ".join(['^%s' % i for i in list(tmp[0][::-1])] + ['$%s' % i for i in list(tmp[1])])
+# 	start_date += step
+
+# with open("dd_month_yy.rule", "a") as f:
+# 	for i in sorted(list(set(result))):
+# 		f.write("%s\n" % dd_month_yy)
+		
+## ddyy_month
+# result = []
+# step = datetime.timedelta(days=1)
+
+# while start_date < end_date:
+# 	tmp = start_date.strftime('%d-%y').split("-")
+# 	ddyy_month = " ".join(['^%s' % i for i in list(tmp[1][::-1])] + ['^%s' % i for i in list(tmp[0][::-1])])
+# 	result.append(ddyy_month)
+# 	start_date += step
+
+# with open("ddyy_month.rule", "a") as f:
+# 	for i in sorted(list(set(result))): 
+# 		f.write("%s\n" % i)
