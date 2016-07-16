@@ -14,7 +14,7 @@ class Part {
 	}
 
 	public Part(String word) {
-		System.out.println(word);
+		
 		this.password = word;
 		calcStats();
 	}

@@ -5,39 +5,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public class segen {
 
-	static String[] line_lowercase = { "`1234567890-=", "qwertyuiop[]",
-			"asdfghjkl;'", "zxcvbnm,./" };
+	static String[] line = { "`1234567890-=", "qwertyuiop[]", "asdfghjkl;'", "zxcvbnm,./" };
 
-	static String[] upper_lowercase = { "1qaz", "2wsx", "3edc", "4rfv", "5tgb",
-			"6yhn", "7ujm", "8ik,", "9ol.", "0p;/", "-['" };
-
-	static String[] upper_lowercase_backwards = { "]'/", "=[;.", "-pl,",
-			"0okm", "9ijn", "8uhb", "7ygv", "6tfc", "5rdx", "4esz", "3wa" };
-
-	static String[] line_uppercase = { "~!@#$%^&*()_+", "QWERTYUIOP{}",
-			"ASDFGHJKL:\"", "ZXCVBNM<>?" };
-
-	static String[] upper_uppercase = { "!QAZ", "@WSX", "#EDC", "$RFV", "%TGB",
-			"^YHN", "&UJM", "*IK<", "(OL>", ")P:?", "_{\"", };
-
-	static String[] upper_uppercase_backwards = { "}\"?", "+{:>", "_PL<",
-			")OKM", "(IJN", "*UHB", "&YGV", "^TFC", "%RDX", "$ESZ", "#WA" };
-
-	static String[] line_capslock = { "`1234567890-=", "QWERTYUIOP[]",
-			"ASDFGHJKL;'", "ZXCVBNM,./" };
-
-	static String[] upper_capslock = { "1QAZ", "2WSX", "3EDC", "4RFV", "5TGB",
-			"6YHN", "7UJM", "8IK,", "9OL.", "0P;/", "-['" };
-
-	static String[] upper_capslock_backwards = { "]'/", "=[;.", "-PL,", "0OKM",
-			"9IJN", "8UHB", "7YGV", "6TFC", "5RDX", "4ESZ", "3WA" };
+	static String[] upper = { "1qaz", "2wsx", "3edc", "4rfv", "5tgb", "6yhn", "7ujm", "8ik,", "9ol.", "0p;/", "-['",
+			"2qaz", "3wsx", "4edc", "5rfv", "6tgb", "7yhn", "8ujm", "9ik,", "0ol.", "-p;/", "=]'/", "-[;.", "0pl,",
+			"9okm", "8ijn", "7uhb", "6ygv", "5tfc", "4rdx", "3esz" };
 
 	private static HashSet<String> merged;
 	private static HashSet<Part> passwords;
@@ -92,7 +73,7 @@ public class segen {
 
 	}
 
-	static void init() {
+	static void init(int type, int size) {
 
 		add("`", "`~1!");
 		add("~", "`~1!");
@@ -164,6 +145,55 @@ public class segen {
 		add(":", "p['/.l;P{\"?>L:");
 		add("\"", "][;/'}{:?\"");
 
+		
+		List<String> init = new ArrayList();
+
+		if (type == 1) {
+			for (String tmp : line)
+				init.add(tmp);
+		}
+
+		if (type == 0) {
+			for (String tmp : upper)
+				init.add(tmp);
+		}
+		if (type == 2) {
+			for (String tmp : upper)
+				init.add(tmp);
+			for (String tmp : line)
+				init.add(tmp);
+		}
+
+
+
+		for (String tmp : init) {
+			for (int i = 0; i <= tmp.length() - size; i++) {
+
+				merged.add(tmp.substring(i, i + size));
+			}
+		}
+		for (String tmp : init) {
+			for (int i = 0; i <= tmp.length() - size; i++) {
+				merged.add(utils.capsed(tmp.substring(i, i + size)));// capslock
+			}
+		}
+		for (String tmp : init) {
+			for (int i = 0; i <= tmp.length() - size; i++) {
+				merged.add(utils.shifted(tmp.substring(i, i + size)));// shift
+																		// pressed
+			}
+		}
+
+		if (reverse == true)
+			reverse();
+
+		for (String tmp : init) {
+			for (int i = 0; i <= tmp.length() - size; i++) {
+
+				merged.add(utils.upperfirst(tmp.substring(i, i + size)));// upperfirts
+			}
+		}
+
 	}
 
 	static void runExternal() throws IOException, InterruptedException {
@@ -171,8 +201,7 @@ public class segen {
 		// hacked external program run
 		Process p = Runtime.getRuntime().exec(exec_path + " " + temp_name);
 		System.out.println("Waiting for batch file ...");
-		BufferedReader stdOut = new BufferedReader(new InputStreamReader(
-				p.getInputStream()));
+		BufferedReader stdOut = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
 		while ((stdOut.readLine()) != null)
 			;
@@ -233,75 +262,14 @@ public class segen {
 		for (String tmp : merged) {
 			rev.add(new StringBuilder(tmp).reverse().toString());
 		}
+		for (String tmp : merged) {
+
+			rev.add(utils.upperfirst(new StringBuilder(tmp).reverse().toString()));// upperfirts
+		}
+
 		for (String tmp : rev) {
 			merged.add(tmp);
 		}
-	}
-
-	static void init_line(int size) {
-
-		merged = new HashSet<String>();
-
-		for (String tmp : line_lowercase) {
-			for (int i = 0; i <= tmp.length() - size; i++) {
-				merged.add(tmp.substring(i, i + size));
-			}
-		}
-		for (String tmp : line_uppercase) {
-			for (int i = 0; i <= tmp.length() - size; i++) {
-				merged.add(tmp.substring(i, i + size));
-			}
-		}
-		for (String tmp : line_capslock) {
-			for (int i = 0; i <= tmp.length() - size; i++) {
-				merged.add(tmp.substring(i, i + size));
-			}
-		}
-		if (reverse == true)
-			reverse();
-	}
-
-	static void init_upper(int size) {
-
-		merged = new HashSet<String>();
-
-		for (String tmp : upper_lowercase) {
-			for (int i = 0; i <= tmp.length() - size; i++) {
-				merged.add(tmp.substring(i, i + size));
-			}
-		}
-		for (String tmp : upper_lowercase_backwards) {
-			for (int i = 0; i <= tmp.length() - size; i++) {
-				merged.add(tmp.substring(i, i + size));
-			}
-		}
-		for (String tmp : upper_uppercase) {
-			for (int i = 0; i <= tmp.length() - size; i++) {
-				merged.add(tmp.substring(i, i + size));
-			}
-		}
-
-		for (String tmp : upper_uppercase_backwards) {
-			for (int i = 0; i <= tmp.length() - size; i++) {
-				merged.add(tmp.substring(i, i + size));
-			}
-		}
-
-		for (String tmp : upper_capslock) {
-			for (int i = 0; i <= tmp.length() - size; i++) {
-				merged.add(tmp.substring(i, i + size));
-			}
-		}
-
-		for (String tmp : upper_capslock_backwards) {
-			for (int i = 0; i <= tmp.length() - size; i++) {
-				merged.add(tmp.substring(i, i + size));
-			}
-		}
-
-		// reverse strings
-		if (reverse == true)
-			reverse();
 	}
 
 	static void generate(HashSet<Part> iterate, Part start, int depth) {
@@ -339,8 +307,7 @@ public class segen {
 
 	static void help() {
 		System.out.println("-e , --exec  executable path with options");
-		System.out
-				.println("Sample: -e \"D:\\hashcat\\hashcat-cli64.exe -m 0 test.txt\"");
+		System.out.println("Sample: -e \"D:\\hashcat\\hashcat-cli64.exe -m 0 test.txt\"");
 		System.out.println("-t , --type 0|1");
 		System.out.println("0 - upper");
 		System.out.println("1 - line(default)");
@@ -357,7 +324,8 @@ public class segen {
 		Integer type = 0;
 		Integer parts = 3;
 		Integer length = 3;
-		init();
+		Integer partsmax=0;
+		merged = new HashSet<String>();
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("-e") || args[i].equals("--exec"))
 				if (i + 1 < args.length) {
@@ -377,6 +345,12 @@ public class segen {
 			if (args[i].equals("-l") || args[i].equals("--length"))
 				if (i + 1 < args.length)
 					length = Integer.parseInt(args[i + 1]);
+			
+			if (args[i].equals("-pm") || args[i].equals("--part-length-max"))
+				if (i + 1 < args.length)
+					partsmax = Integer.parseInt(args[i + 1]);
+			
+			
 			if (args[i].equals("--policy"))
 				policy = true;
 			if (args[i].equals("--reverse"))
@@ -398,15 +372,25 @@ public class segen {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		if (type == 1)
-			init_line(parts);
+		if(partsmax!=0)
+		{
+			
+			for(int i=parts;i<=partsmax;i++)
+			{
+				System.out.println(i);
+				init(type, i);
+				System.out.println(merged.size());
+			}
+		}
 		else
-			init_upper(parts);
+		{
+			init(type, parts);
+		}
+		
 
 		length = length - 1;// Human readable
 		passwords = new HashSet<Part>();
-
+		System.out.println(merged.size());
 		for (String tmp : merged) {
 			passwords.add(new Part(tmp));
 		}
