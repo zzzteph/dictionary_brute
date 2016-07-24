@@ -2,6 +2,8 @@ package core;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
@@ -10,8 +12,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import beans.ModuleOptions;
 import common.Utils;
-
+import common.Error;
 public class ModuleParser {
 	private static ModuleParser instance;
 	
@@ -21,17 +24,17 @@ public class ModuleParser {
 		}
 		return instance;
 	}
-	public void parse(String fileName) {
-
+	public List<ModuleOptions> parse(String fileName) {
+			
+		List<ModuleOptions>ret=new ArrayList<ModuleOptions>();
 			File inputFile = new File(fileName);
 			DocumentBuilder dBuilder = Utils.getDocumentBuilder();
 			Document doc = null;
 			try {
 				doc = dBuilder.parse(inputFile);
 			} catch (SAXException | IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				return;
+				Error.error(e.getMessage());
+				
 			}
 			doc.getDocumentElement().normalize();
 
@@ -54,6 +57,6 @@ public class ModuleParser {
 					 }
 				}
 			}
-
+			return ret;
 	}
 }
