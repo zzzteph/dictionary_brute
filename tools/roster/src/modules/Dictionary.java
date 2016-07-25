@@ -1,5 +1,5 @@
 package modules;
 
-public class Dictionary {
+public class Dictionary extends ModuleImpl{
 
 }

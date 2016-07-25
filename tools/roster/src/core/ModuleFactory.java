@@ -8,7 +8,7 @@ public class ModuleFactory {
 
         try {
             module=Character.toUpperCase(module.charAt(0)) + module.substring(1);
-            module="core.module."+module;
+            module="modules."+module;
             Class<?> cl = Class.forName(module);
             return (IModule) cl.getConstructor().newInstance();
            

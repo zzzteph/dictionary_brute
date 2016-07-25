@@ -26,7 +26,8 @@ public class ModuleParser {
 	}
 	public List<ModuleOptions> parse(String fileName) {
 			
-		List<ModuleOptions>ret=new ArrayList<ModuleOptions>();
+			List<ModuleOptions>ret=new ArrayList<ModuleOptions>();
+			ModuleOptions tmp;
 			File inputFile = new File(fileName);
 			DocumentBuilder dBuilder = Utils.getDocumentBuilder();
 			Document doc = null;
@@ -45,7 +46,8 @@ public class ModuleParser {
 				
 				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 					Element eElement = (Element) nNode;
-					System.out.println(eElement.getAttribute("class"));
+					
+					tmp=new ModuleOptions(eElement.getAttribute("class"));
 					NodeList moduleOptions = nNode.getChildNodes();
 					
 					 for (int j = 0; j < moduleOptions.getLength(); j++) {
