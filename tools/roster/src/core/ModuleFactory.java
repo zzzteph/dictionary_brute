@@ -1,6 +1,6 @@
 package core;
 
-import interfaces.IModule;
+import core.interfaces.IModule;
 
 public class ModuleFactory {
 

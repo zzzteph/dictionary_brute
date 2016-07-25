@@ -12,9 +12,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import beans.ModuleOptions;
 import common.Utils;
-import common.Error;
+import core.beans.ModuleOptions;
+import common.Logger;
 public class ModuleParser {
 	private static ModuleParser instance;
 	
@@ -34,7 +34,7 @@ public class ModuleParser {
 			try {
 				doc = dBuilder.parse(inputFile);
 			} catch (SAXException | IOException e) {
-				Error.error(e.getMessage());
+				Logger.error(e.getMessage());
 				
 			}
 			doc.getDocumentElement().normalize();

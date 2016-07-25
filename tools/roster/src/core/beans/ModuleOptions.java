@@ -1,8 +1,8 @@
-package beans;
+package core.beans;
 
 import java.util.Map;
 
-import common.Error;
+import common.Logger;
 import core.*;
 public class ModuleOptions {
 	String module;
@@ -11,7 +11,7 @@ public class ModuleOptions {
 	{
 		if((this.module=ModuleFactory.checkModule(module))!=null)
 		{
-			Error.error("Module not exist");
+			Logger.error("Module not exist");
 		}
 	}
 }
