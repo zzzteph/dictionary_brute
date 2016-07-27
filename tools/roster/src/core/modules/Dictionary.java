@@ -1,13 +1,18 @@
 package core.modules;
-import common.Logger;
-public class Dictionary extends ModuleImpl{
 
-	final String DICTIONARY="DICTIONARY";
-	public void run() {
-		if(!this.options.containsKey(this.DICTIONARY))
+import java.util.List;
+
+import common.Logger;
+
+import core.beans.Strings;
+
+public class Dictionary extends ModuleImpl {
+
+	public List<String> run() {
+		if (!this.options.containsKey(Strings.DICTIONARY))
 			Logger.error("NO DICTIONARY SET");
-		this.options.put(this.TAIL, options.get(this.DICTIONARY));
-		super.run();
+		this.options.put(Strings.TAIL, options.get(Strings.DICTIONARY));
+		return super.run();
 	}
 
 }

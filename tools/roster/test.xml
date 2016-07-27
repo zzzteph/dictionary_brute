@@ -1,0 +1,14 @@
+<root>
+<module class="dictionary">	
+	<dictionary>$MAINDIR/top10000.txt</dictionary>
+</module>
+<module class="dictionary">	
+	<dictionary>$MAINDIR/top10000.txt</dictionary>
+	<rules>/home/steph/dictionary_brute/rules/common_rules/fast.rules</rules>
+</module>
+<module class="dictionary">	
+	<dictionary>$MAINDIR/top10000.txt</dictionary>
+	<rules>/home/steph/dictionary_brute/rules/common_rules/common.rules</rules>
+</module>
+
+</root>

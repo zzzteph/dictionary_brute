@@ -1,0 +1,2 @@
+EXEC=/home/steph/hashcat/hashcat-cli64.exe
+MAINDIR=/home/steph/dictionary_brute/tools/roster
