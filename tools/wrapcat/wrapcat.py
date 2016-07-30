@@ -11,6 +11,7 @@ import os
 import re
 import logging
 from tabulate import tabulate
+import csv
 
 
 class Hashcat(object):
@@ -23,6 +24,7 @@ class Hashcat(object):
 		self.__hashfile = args.hash
 		self.__mode = str(args.mode)
 		self.__result = []
+		self.__output = args.output
 
 	def start(self):
 		logging.info("started hashfile: %s, mode: %s" % (self.__hashfile, self.__mode))
@@ -44,8 +46,11 @@ class Hashcat(object):
 				self.run_hashcat()
 
 		table = tabulate(sorted(self.__result, key=lambda tup: tup[2], reverse=True), headers=['Dictionary', 'Ruleset', 'K'])
-		with open("result.txt", "w") as f:
-			f.write(table)
+
+		with open(self.__output, 'w') as f:
+			writer = csv.writer(f, delimiter=',')
+			writer.writerow(['Dictionary', 'Ruleset', 'K'])
+			writer.writerows(self.__result)
 
 		logging.info("finished hashfile: %s, mode: %s\n%s" % (self.__hashfile, self.__mode, table))
 
@@ -88,6 +93,7 @@ def main():
 	parser.add_argument("-R", metavar='directory', help="rulesets directory", required=False)
 	parser.add_argument("--debug", help="enable debug logging", action='store_true', required=False)
 	parser.add_argument("--log", help="loggign to file app.log", action='store_true', required=False)
+	parser.add_argument("--output", "-o", metavar='file', help="output to csv file", required=False)
 	args = parser.parse_args()
 
 	if args.debug:
