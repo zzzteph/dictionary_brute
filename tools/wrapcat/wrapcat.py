@@ -102,7 +102,7 @@ def main():
 	parser.add_argument("-r", metavar='file', help="ruleset file", required=False)
 	parser.add_argument("-R", metavar='directory', help="rulesets directory", required=False)
 	parser.add_argument("--debug", help="enable debug logging", action='store_true', required=False)
-	parser.add_argument("--log", help="loggign to file app.log", action='store_true', required=False)
+	parser.add_argument("--log", help="logging to file app.log", action='store_true', required=False)
 	parser.add_argument("--output", "-o", metavar='file', help="output to csv file", required=False)
 	args = parser.parse_args()
 
