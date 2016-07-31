@@ -22,7 +22,7 @@ optional arguments:
   --output file, -o file
                         output to csv file
 
-Results expliantion:
+Explanation of results:
   K1 - (recoverd hashes / total hashes) / total variants
   K2 - recoverd hashes / total hashes
 
