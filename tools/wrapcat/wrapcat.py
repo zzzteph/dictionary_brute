@@ -25,6 +25,10 @@ class Hashcat(object):
 		self.__mode = str(args.mode)
 		self.__result = []
 		self.__output = args.output
+		if self.__output:
+			with open(self.__output, 'w') as f:
+				writer = csv.writer(f, delimiter=',')
+				writer.writerow(['Dictionary', 'Ruleset', 'K1', 'K2', 'Total variants'])
 
 	def start(self):
 		logging.info("started hashfile: %s, mode: %s" % (self.__hashfile, self.__mode))
@@ -45,12 +49,7 @@ class Hashcat(object):
 			else:
 				self.run_hashcat()
 
-		table = tabulate(sorted(self.__result, key=lambda tup: tup[2], reverse=True), headers=['Dictionary', 'Ruleset', 'K'])
-
-		with open(self.__output, 'w') as f:
-			writer = csv.writer(f, delimiter=',')
-			writer.writerow(['Dictionary', 'Ruleset', 'K'])
-			writer.writerows(self.__result)
+		table = tabulate(sorted(self.__result, key=lambda tup: tup[2], reverse=True), headers=['Dictionary', 'Ruleset', 'K1', 'K2', 'Total variants'])
 
 		logging.info("finished hashfile: %s, mode: %s\n%s" % (self.__hashfile, self.__mode, table))
 
@@ -65,8 +64,7 @@ class Hashcat(object):
 				"--machine-readable",
 				"--potfile-disable"]
 
-		proc = Popen(cmd, stdin=PIPE, stdout=PIPE)
-		proc.wait()
+		proc = Popen(cmd, stdin=PIPE, stdout=PIPE, stderr=PIPE)
 		out, err = proc.communicate()
 		if err:
 			logging.error("cmd: %s, \nerr: %s" % (cmd, err))
@@ -77,13 +75,25 @@ class Hashcat(object):
 				if variants != total_variants:
 					logging.error("Hmm... Something wrong, cmd: %s, \nout: %s" % (cmd, out))
 				else:
-					k = (float(recovered_hashes) / float(all_hashes)) / float(total_variants)
-					self.__result.append((self.__dict, self.__ruleset, k))
+					k1 = (float(recovered_hashes) / float(all_hashes)) / float(total_variants)
+					k2 = float(recovered_hashes) / float(all_hashes)
+					self.__result.append((self.__dict, self.__ruleset, k1, k2, total_variants))
+
+					logging.debug("started dict: %s, ruleset: %s, K1 = %s, K2 = %s, total variants = %s " % (self.__dict, self.__ruleset, k1, k2, total_variants))
+
+					if self.__output:
+						with open(self.__output, 'a') as f:
+							writer = csv.writer(f, delimiter=',')
+							writer.writerow((self.__dict, self.__ruleset, '{0:.16f}'.format(k1), '{0:.16f}'.format(k2), total_variants))
 
 
 def main():
 	help = """Hashcat wrapper"""
-	parser = argparse.ArgumentParser(description=help, epilog="Author: %s" % __author__)
+	epilog = """Results expliantion:
+  K1 - (recoverd hashes / total hashes) / total variants
+  K2 - recoverd hashes / total hashes
+\nAuthor: %s""" % __author__
+	parser = argparse.ArgumentParser(description=help, epilog=epilog, formatter_class=argparse.RawTextHelpFormatter)
 	parser.add_argument("--bin", "-b", metavar='bin', help="hashcat binary", required=True)
 	parser.add_argument("--hash", metavar='file', help="hashfile", required=True)
 	parser.add_argument("--mode", "-m", metavar='mode', help="hash mode", type=int, required=True)
