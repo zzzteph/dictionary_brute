@@ -14,7 +14,7 @@ from tabulate import tabulate
 import csv
 
 
-class Hashcat(object):
+class Wrapcat(object):
 	def __init__(self, args):
 		self.__bin = args.bin
 		self.__dict = args.d
@@ -142,7 +142,7 @@ def main():
 	if args.R and not os.path.isdir(args.R):
 		parser.error('%s is not a directory' % args.R)
 
-	Hashcat(args).start()
+	Wrapcat(args).start()
 
 if __name__ == '__main__':
 	main()
