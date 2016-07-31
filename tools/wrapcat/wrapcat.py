@@ -89,7 +89,7 @@ class Wrapcat(object):
 
 def main():
 	help = """Hashcat wrapper"""
-	epilog = """Results expliantion:
+	epilog = """Explanation of results:
   K1 - (recoverd hashes / total hashes) / total variants
   K2 - recoverd hashes / total hashes
 \nAuthor: %s""" % __author__
