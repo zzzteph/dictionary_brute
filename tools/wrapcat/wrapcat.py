@@ -90,8 +90,8 @@ class Wrapcat(object):
 def main():
 	help = """Hashcat wrapper"""
 	epilog = """Explanation of results:
-  K1 - (recoverd hashes / total hashes) / total variants
-  K2 - recoverd hashes / total hashes
+  K1 - (recovered hashes / total hashes) / total variants
+  K2 - recovered hashes / total hashes
 \nAuthor: %s""" % __author__
 	parser = argparse.ArgumentParser(description=help, epilog=epilog, formatter_class=argparse.RawTextHelpFormatter)
 	parser.add_argument("--bin", "-b", metavar='bin', help="hashcat binary", required=True)

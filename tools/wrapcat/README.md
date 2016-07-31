@@ -23,8 +23,8 @@ optional arguments:
                         output to csv file
 
 Explanation of results:
-  K1 - (recoverd hashes / total hashes) / total variants
-  K2 - recoverd hashes / total hashes
+  K1 - (recovered hashes / total hashes) / total variants
+  K2 - recovered hashes / total hashes
 
 Author: @tsma11
 ```
