@@ -1,5 +1,7 @@
 package core;
 
+import common.Logger;
+
 import core.interfaces.IModule;
 
 public class ModuleFactory {
@@ -16,7 +18,7 @@ public class ModuleFactory {
 			return (IModule) cl.getConstructor().newInstance();
 
 		} catch (Exception ex) {
-			System.out.println(ex.getMessage());
+			Logger.error(ex.getMessage());
 		}
 		return null;
 	}

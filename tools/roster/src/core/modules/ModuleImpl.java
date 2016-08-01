@@ -53,7 +53,7 @@ public abstract class ModuleImpl implements IModule {
 		cmd.append(options.get(Strings.INPUT));
 		cmd.append(" ");
 		cmd.append(options.get(Strings.TAIL));
-		System.out.println(cmd.toString());
+		// System.out.println(cmd.toString());
 		Process p;
 		try {
 			p = Runtime.getRuntime().exec(cmd.toString());
@@ -64,7 +64,6 @@ public abstract class ModuleImpl implements IModule {
 			while ((stdOut.readLine()) != null)
 				;
 
-			System.out.println("Batch file done.");
 		} catch (IOException e) {
 
 			Logger.error(e.getMessage());

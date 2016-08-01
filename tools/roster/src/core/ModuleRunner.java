@@ -12,7 +12,7 @@ import core.interfaces.IModule;
 
 public class ModuleRunner {
 	private static ModuleRunner instance;
-	private static List<String> results = new ArrayList();
+	private static List<String> results = new ArrayList<String>();
 
 	public static synchronized ModuleRunner getInstance() {
 		if (instance == null) {
@@ -27,12 +27,15 @@ public class ModuleRunner {
 		for (String crackedPasswords : results) {
 			int i = 0;
 			for (String uncrackedPasswords : file) {
-				if (crackedPasswords.equals(uncrackedPasswords)) {
+				if (crackedPasswords.contains(uncrackedPasswords)) {
 					file.remove(i);
+
 					break;
 				}
+				i++;
 			}
 		}
+
 		Utils.writeToFile(GlobalOptions.getInstance().getOption(Strings.INPUT),
 				file);
 

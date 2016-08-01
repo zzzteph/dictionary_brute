@@ -26,7 +26,6 @@ public class ModuleOptions {
 		value = value.replace("$MAINDIR", GlobalOptions.getInstance()
 				.getOption(Strings.MAINDIR));
 		options.put(key, value);
-		System.out.println(key + "====>" + value);
 	}
 
 	public String getModule() {
