@@ -53,7 +53,7 @@ public abstract class ModuleImpl implements IModule {
 		cmd.append(options.get(Strings.INPUT));
 		cmd.append(" ");
 		cmd.append(options.get(Strings.TAIL));
-		// System.out.println(cmd.toString());
+		System.out.println(cmd.toString());
 		Process p;
 		try {
 			p = Runtime.getRuntime().exec(cmd.toString());
@@ -62,16 +62,21 @@ public abstract class ModuleImpl implements IModule {
 					p.getInputStream()));
 
 			while ((stdOut.readLine()) != null)
-				;
+			{
+				if(!p.isAlive())break;
 
+			}
 		} catch (IOException e) {
 
 			Logger.error(e.getMessage());
 		}
+
 		List<String> ret = Utils.readFile(options.get(Strings.OUTPUT));
+
 		Utils.deleteFile(options.get(Strings.OUTPUT));
+
 		for (String temp : ret) {
-			System.out.println(temp);
+		//	System.out.println(temp);
 		}
 		return ret;
 	}

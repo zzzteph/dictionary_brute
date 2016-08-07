@@ -22,6 +22,7 @@ public class Utils {
 		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
 			String line;
 			while ((line = br.readLine()) != null) {
+				
 				if (!ret.contains(line))
 					ret.add(line);
 			}

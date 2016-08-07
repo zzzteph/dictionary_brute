@@ -16,15 +16,10 @@ import common.Utils;
 import core.beans.Strings;
 import core.modules.helpers.Part;
 
-public class Qwertycomb extends ModuleImpl {
+public class Keybordcomb extends ModuleImpl {
 
-	String[] line = { "`1234567890-=", "qwertyuiop[]", "asdfghjkl;'",
-			"zxcvbnm,./" };
-
-	String[] upper = { "1qaz", "2wsx", "3edc", "4rfv", "5tgb", "6yhn", "7ujm",
-			"8ik,", "9ol.", "0p;/", "-['", "2qaz", "3wsx", "4edc", "5rfv",
-			"6tgb", "7yhn", "8ujm", "9ik,", "0ol.", "-p;/", "=]'/", "-[;.",
-			"0pl,", "9okm", "8ijn", "7uhb", "6ygv", "5tfc", "4rdx", "3esz" };
+	String[] line = {};
+	String[] upper = {};
 
 	HashSet<String> merged;
 	HashSet<Part> passwords;
@@ -39,8 +34,8 @@ public class Qwertycomb extends ModuleImpl {
 	Boolean policy = false;
 	Boolean reverse = false;
 	Boolean optimization = false;
-	String lowercase = "qazwsxedcrfvtgbyhnujmikolp";
-	String uppercase = "QAZWSXEDCRFVTGBYHNUJMIKOLP";
+	String lowercase;
+	String uppercase;
 	String digits = "1234567890";
 	Integer count = 0;
 	static Map<String, HashSet<String>> links = new HashMap<String, HashSet<String>>();
@@ -155,76 +150,6 @@ public class Qwertycomb extends ModuleImpl {
 
 	void init(int type, int size) {
 
-		add("`", "`~1!");
-		add("~", "`~1!");
-
-		add("0", "_-po90");
-		add("1", "12q!@Q");
-		add("2", "123wq!@#WQ");
-		add("3", "34ew2@#$EW");
-		add("4", "345re#$%RE");
-		add("5", "56tr4%^TR$");
-		add("6", "67yt5%^&YT");
-		add("7", "78uy6&*UY^");
-		add("8", "89iu7*(IU&");
-		add("9", "90oi8()OI*");
-		add("0", "0-po9)_PO(");
-		add("-", "-=[p0_+{P)");
-		add("=", "=][-+}{_");
-		add(")", "_-po90");
-		add("!", "12q!@Q");
-		add("@", "123wq!@#WQ");
-		add("#", "34ew2@#$EW");
-		add("$", "345re#$%RE");
-		add("%", "56tr4%^TR$");
-		add("^", "67yt5%^&YT");
-		add("&", "78uy6&*UY^");
-		add("*", "89iu7*(IU&");
-		add("(", "90oi8()OI*");
-		add(")", "0-po9)_PO(");
-		add("_", "-=[p0_+{P)");
-		add("+", "=][-+}{_");
-		add("q", "12waq!@WAQ");
-		add("w", "23esaqw@#ESAQW");
-		add("e", "34rdswe#$RDSWE");
-		add("r", "45tfder$%TFDER");
-		add("t", "56ygfrt%^YGFRT");
-		add("y", "67uhgty^&UHGTY");
-		add("u", "78ijhyu&*IJHYU");
-		add("i", "89okjui*(OKJUI");
-		add("o", "90plkio()PLKIO");
-		add("p", "0-[;lop)_{:LOP");
-		add("[", "-=]';p[_+}\":P{");
-		add("]", "=[']+{\"}");
-		add("a", "aAqwszQWSZ");
-		add("s", "wedxzasWEDXZAS");
-		add("d", "erfcxsdERFCXSD");
-		add("f", "rtgvcdfRTGVCDF");
-		add("g", "tyhbvfgTYHBVFG");
-		add("h", "yujnbghYUJNBGH");
-		add("j", "uikmnhjUIKMNHJ");
-		add("k", "iol,mjkIOL<MJK");
-		add("l", "op;.,klOP:><KL");
-		add(";", "p['/.l;P{\"?>L:");
-		add("'", "][;/'}{:?\"");
-		add("z", "asxzASXZ");
-		add("x", "zsdcxZSDCX");
-		add("c", "xdfvcXDFVC");
-		add("v", "cfgbvCFGBV");
-		add("b", "vghnbVGHNB");
-		add("n", "bhjmnBHJMN");
-		add("m", "njk,mNJK<M");
-		add(",", "mkl.,MKL><");
-		add(".", ",l;/.<L:?>");
-		add("/", "';./\":>?");
-		add("{", "-=]';p[_+}\":P{");
-		add("}", "=[']+{\"}");
-		add("<", "mkl.,MKL><");
-		add(">", ",l;/.<L:?>");
-		add("?", "';./\":>?");
-		add(":", "p['/.l;P{\"?>L:");
-		add("\"", "][;/'}{:?\"");
-
 		List<String> init = new ArrayList<String>();
 
 		if (type == 1) {
@@ -283,7 +208,9 @@ public class Qwertycomb extends ModuleImpl {
 
 	void makeDictionary(String temp) {
 		if (size > max_size) {
+
 			writer.close();
+
 			runExternal();
 			size = 0;
 			Utils.deleteFile(temp_name);
@@ -359,6 +286,12 @@ public class Qwertycomb extends ModuleImpl {
 		Integer length = 3;
 		Integer partsmax = 0;
 		merged = new HashSet<String>();
+		if (options.get(Strings.KEYBOARD).equalsIgnoreCase("qwerty")) {
+			init_qwerty();
+		} else {
+			Logger.error("No such keyboard");
+		}
+
 		if (options.get(Strings.TYPE) != null)
 			type = Integer.parseInt(options.get(Strings.TYPE));
 		if (options.get(Strings.PARTS) != null)
@@ -403,9 +336,91 @@ public class Qwertycomb extends ModuleImpl {
 		runExternal();
 		writer.close();
 		Utils.deleteFile(temp_name);
-		for (String tmp : ret)
-			System.out.println(tmp);
+
 		return ret;
+	}
+
+	private void init_qwerty() {
+		String[] line_init = { "`1234567890-=", "qwertyuiop[]", "asdfghjkl;'", "zxcvbnm,./" };
+
+		String[] upper_init = { "1qaz", "2wsx", "3edc", "4rfv", "5tgb", "6yhn", "7ujm", "8ik,", "9ol.", "0p;/", "-['",
+				"2qaz", "3wsx", "4edc", "5rfv", "6tgb", "7yhn", "8ujm", "9ik,", "0ol.", "-p;/", "=]'/", "-[;.", "0pl,",
+				"9okm", "8ijn", "7uhb", "6ygv", "5tfc", "4rdx", "3esz" };
+
+		lowercase = "qazwsxedcrfvtgbyhnujmikolp";
+		uppercase = "QAZWSXEDCRFVTGBYHNUJMIKOLP";
+		digits = "1234567890";
+		add("`", "`~1!");
+		add("~", "`~1!");
+		add("0", "_-po90");
+		add("1", "12q!@Q");
+		add("2", "123wq!@#WQ");
+		add("3", "34ew2@#$EW");
+		add("4", "345re#$%RE");
+		add("5", "56tr4%^TR$");
+		add("6", "67yt5%^&YT");
+		add("7", "78uy6&*UY^");
+		add("8", "89iu7*(IU&");
+		add("9", "90oi8()OI*");
+		add("0", "0-po9)_PO(");
+		add("-", "-=[p0_+{P)");
+		add("=", "=][-+}{_");
+		add(")", "_-po90");
+		add("!", "12q!@Q");
+		add("@", "123wq!@#WQ");
+		add("#", "34ew2@#$EW");
+		add("$", "345re#$%RE");
+		add("%", "56tr4%^TR$");
+		add("^", "67yt5%^&YT");
+		add("&", "78uy6&*UY^");
+		add("*", "89iu7*(IU&");
+		add("(", "90oi8()OI*");
+		add(")", "0-po9)_PO(");
+		add("_", "-=[p0_+{P)");
+		add("+", "=][-+}{_");
+		add("q", "12waq!@WAQ");
+		add("w", "23esaqw@#ESAQW");
+		add("e", "34rdswe#$RDSWE");
+		add("r", "45tfder$%TFDER");
+		add("t", "56ygfrt%^YGFRT");
+		add("y", "67uhgty^&UHGTY");
+		add("u", "78ijhyu&*IJHYU");
+		add("i", "89okjui*(OKJUI");
+		add("o", "90plkio()PLKIO");
+		add("p", "0-[;lop)_{:LOP");
+		add("[", "-=]';p[_+}\":P{");
+		add("]", "=[']+{\"}");
+		add("a", "aAqwszQWSZ");
+		add("s", "wedxzasWEDXZAS");
+		add("d", "erfcxsdERFCXSD");
+		add("f", "rtgvcdfRTGVCDF");
+		add("g", "tyhbvfgTYHBVFG");
+		add("h", "yujnbghYUJNBGH");
+		add("j", "uikmnhjUIKMNHJ");
+		add("k", "iol,mjkIOL<MJK");
+		add("l", "op;.,klOP:><KL");
+		add(";", "p['/.l;P{\"?>L:");
+		add("'", "][;/'}{:?\"");
+		add("z", "asxzASXZ");
+		add("x", "zsdcxZSDCX");
+		add("c", "xdfvcXDFVC");
+		add("v", "cfgbvCFGBV");
+		add("b", "vghnbVGHNB");
+		add("n", "bhjmnBHJMN");
+		add("m", "njk,mNJK<M");
+		add(",", "mkl.,MKL><");
+		add(".", ",l;/.<L:?>");
+		add("/", "';./\":>?");
+		add("{", "-=]';p[_+}\":P{");
+		add("}", "=[']+{\"}");
+		add("<", "mkl.,MKL><");
+		add(">", ",l;/.<L:?>");
+		add("?", "';./\":>?");
+		add(":", "p['/.l;P{\"?>L:");
+		add("\"", "][;/'}{:?\"");
+		line=line_init;
+		upper=upper_init;
+		
 	}
 
 }

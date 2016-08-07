@@ -22,6 +22,7 @@ public class ModuleRunner {
 	}
 
 	private void rebuildInputFile() {
+		
 		List<String> file = Utils.readFile(GlobalOptions.getInstance()
 				.getOption(Strings.INPUT));
 		for (String crackedPasswords : results) {
@@ -35,7 +36,7 @@ public class ModuleRunner {
 				i++;
 			}
 		}
-
+		
 		Utils.writeToFile(GlobalOptions.getInstance().getOption(Strings.INPUT),
 				file);
 
@@ -54,6 +55,11 @@ public class ModuleRunner {
 		}
 
 		results.addAll(module.run());
+		for(String tmp:results)
+		{
+			System.out.println(tmp);
+		}
+		System.out.println(results.size());
 		rebuildInputFile();
 	}
 

@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
+import static org.fusesource.jansi.Ansi.*;
+import static org.fusesource.jansi.Ansi.Color.*;
+import org.fusesource.jansi.Ansi.Attribute;
 
 import common.Logger;
 import common.Utils;
@@ -88,6 +91,8 @@ public class main {
 	}
 
 	public static void main(String[] args) {
+
+
 		GlobalOptions global = GlobalOptions.getInstance();
 		String inputFile = null;
 		for (int i = 0; i < args.length; i++) {
@@ -96,7 +101,16 @@ public class main {
 					global.add(Strings.MODULE, args[i + 1]);
 					i++;
 				}
-			} else {
+			} 
+			else if (args[i].equals("-s") || args[i].equals("--suggest")) {
+				if (i + 1 != args.length) {
+					global.add(Strings.SUGGEST, args[i + 1]);
+					i++;
+				}
+			}
+			
+			
+			else {
 				System.out.println(args[i]);
 				inputFile = args[i];
 

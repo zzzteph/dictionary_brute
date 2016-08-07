@@ -1,2 +1,5 @@
-EXEC=/home/steph/hashcat/hashcat-cli64.exe
-MAINDIR=/home/steph/dictionary_brute/tools/roster
+#EXEC=/home/steph/hashcat/hashcat-cli64.exe
+#MAINDIR=/home/steph/dictionary_brute/tools/roster
+
+EXEC=D:\hashcat\hashcat-cli64.exe
+MAINDIR=D:\dictionary_brute
