@@ -79,7 +79,7 @@ class Wrapcat(object):
 					k2 = float(recovered_hashes) / float(all_hashes)
 					self.__result.append((self.__dict, self.__ruleset, k1, k2, total_variants))
 
-					logging.debug("started dict: %s, ruleset: %s, K1 = %s, K2 = %s, total variants = %s " % (self.__dict, self.__ruleset, k1, k2, total_variants))
+					logging.debug("finished dict: %s, ruleset: %s, K1 = %s, K2 = %s, total variants = %s " % (self.__dict, self.__ruleset, k1, k2, total_variants))
 
 					if self.__output:
 						with open(self.__output, 'a') as f:
