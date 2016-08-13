@@ -5,12 +5,6 @@ import csv
 import argparse
 import os
 import time
-import pandas as pd
-
-# import random, string
-
-# def randomword(length):
-   # return ''.join(random.choice(string.lowercase) for i in range(length))
 
 def make_charts(file, dir):
 	if not os.path.exists(dir):
@@ -24,31 +18,28 @@ def make_charts(file, dir):
 			dicts.append(row[0])
 
 	for dict in set(dicts):
-		#if dict == "all_dict/translit_rus" or dict == "all_dict/cities.dic":
-			print dict
-			x_labels = []
-			y_labels = []
-			with open(file, 'rb') as f:
-				reader = csv.reader(f)
-				next(reader, None)
-				for row in reader:
-					if row[0] == dict:
-						if float(row[2]) != 0:
-							x_labels.append(float(row[2]))
-							y_labels.append(os.path.basename(row[1]))
-			
-			if y_labels and x_labels:
-				y = range(len(y_labels))
-				plt.style.use('ggplot')
-				plt.xlabel('K1 - (recovered hashes / total hashes) / total variants')
-				plt.ylabel('Rulesets')
-				plt.title('Results for %s' % dict)
-				width = 0.3
-				plt.barh(y, x_labels, width, align='center', alpha=0.4, color="blue")
-				plt.yticks(y, y_labels)
-				plt.savefig("%s/%s.png" % (dir, os.path.basename(dict)), bbox_inches='tight', dpi=100)
-				plt.close() 
-
+		x_labels = []
+		y_labels = []
+		with open(file, 'rb') as f:
+			reader = csv.reader(f)
+			next(reader, None)
+			for row in reader:
+				if row[0] == dict:
+					if float(row[2]) != 0:
+						x_labels.append(float(row[2]))
+						y_labels.append(os.path.basename(row[1]))
+		
+		if y_labels and x_labels:
+			y = range(len(y_labels))
+			plt.style.use('ggplot')
+			plt.xlabel('K1 - (recovered hashes / total hashes) / total variants')
+			plt.ylabel('Rulesets')
+			plt.title('Results for %s' % dict)
+			width = 0.3
+			plt.barh(y, x_labels, width, align='center', alpha=0.4, color="blue")
+			plt.yticks(y, y_labels)
+			plt.savefig("%s/%s.png" % (dir, os.path.basename(dict)), bbox_inches='tight', dpi=100)
+			plt.close() 
 
 def main():
 	parser = argparse.ArgumentParser()
