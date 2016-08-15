@@ -2,9 +2,13 @@ package common;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -15,22 +19,82 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-public class Utils {
 
+public class Utils {
+	public static void cloneFile(String source, String dest) {
+		InputStream is = null;
+		OutputStream os = null;
+		try {
+			try {
+				is = new FileInputStream(source);
+				os = new FileOutputStream(dest);
+			} catch (FileNotFoundException e) {
+				Logger.error(e.getMessage());
+			}
+			byte[] buffer = new byte[1024];
+			int length;
+			try {
+				while ((length = is.read(buffer)) > 0) {
+					os.write(buffer, 0, length);
+				}
+			} catch (IOException e) {
+				Logger.error(e.getMessage());
+			}
+		} finally {
+			try {
+				is.close();
+				os.close();
+			} catch (IOException e) {
+				Logger.error(e.getMessage());
+			}
+
+		}
+	}
+
+	public static void rebuildInputFile(List<String>results,String InputFile) {
+		
+		List<String> file = readFile(InputFile);
+		for (String crackedPasswords : results) {
+			int i = 0;
+			for (String uncrackedPasswords : file) {
+				if (crackedPasswords.contains(uncrackedPasswords)) {
+					file.remove(i);
+					break;
+				}
+				i++;
+			}
+		}
+		
+		writeToFile(InputFile,file);
+
+	}
+	
+	
+	
 	public static List<String> readFile(String file) {
 		List<String> ret = new ArrayList<String>();
-		try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+		BufferedReader br=null;
+		try {
+			 br = new BufferedReader(new FileReader(file));
 			String line;
 			while ((line = br.readLine()) != null) {
 				
 				if (!ret.contains(line))
 					ret.add(line);
 			}
+			br.close();
 		} catch (FileNotFoundException ex) {
 			System.out.println(ex.getMessage());
 		} catch (IOException ex) {
 			System.out.println(ex.getMessage());
 		}
+
+		if(!br.equals(null))
+			try {
+				br.close();
+			} catch (IOException e) {
+				Logger.error(e.getMessage());
+			}
 		return ret;
 	}
 
@@ -42,7 +106,11 @@ public class Utils {
 				writer.println(tmp);
 			}
 			writer.close();
-		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+		} catch (FileNotFoundException e) {
+			Logger.error(e.getMessage());
+		}
+		catch(UnsupportedEncodingException e)
+		{
 			Logger.error(e.getMessage());
 		}
 
@@ -59,6 +127,10 @@ public class Utils {
 		return outFile.getAbsolutePath();
 	}
 
+	public static String getInputFile()
+	{
+		return getOutputFile();
+	}
 	public static boolean deleteFile(String filename) {
 		File file = new File(filename);
 

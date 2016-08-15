@@ -16,30 +16,34 @@ import org.xml.sax.SAXException;
 import common.Logger;
 import common.Utils;
 
-import core.beans.ModuleOptions;
+import core.beans.Options;
 
-public class ModuleParser {
-	private static ModuleParser instance;
+public class Parser {
+	private static Parser instance;
 
-	public static synchronized ModuleParser getInstance() {
+	public static synchronized Parser getInstance() {
 		if (instance == null) {
-			instance = new ModuleParser();
+			instance = new Parser();
 		}
 		return instance;
 	}
 
-	public List<ModuleOptions> parse(String fileName) {
+	public List<Options> parse(String fileName) {
 
-		List<ModuleOptions> ret = new ArrayList<ModuleOptions>();
-		ModuleOptions tmp;
+		List<Options> ret = new ArrayList<Options>();
+		Options tmp;
 		File inputFile = new File(fileName);
 		DocumentBuilder dBuilder = Utils.getDocumentBuilder();
 		Document doc = null;
 		try {
 			doc = dBuilder.parse(inputFile);
-		} catch (SAXException | IOException e) {
+		} catch (SAXException e ) {
 			Logger.error(e.getMessage());
 
+		}
+		catch(IOException e)
+		{
+			Logger.error(e.getMessage());
 		}
 		doc.getDocumentElement().normalize();
 
@@ -51,7 +55,7 @@ public class ModuleParser {
 			if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 
 				Element eElement = (Element) nNode;
-				tmp = new ModuleOptions(eElement.getAttribute("class"));
+				tmp = new Options(eElement.getAttribute("class"));
 				NodeList moduleOptions = nNode.getChildNodes();
 
 				for (int j = 0; j < moduleOptions.getLength(); j++) {
@@ -63,7 +67,8 @@ public class ModuleParser {
 							.item(j).getTextContent());
 
 				}
-				ModuleRunner.getInstance().runModule(tmp);
+				ret.add(tmp);
+				
 			}
 		}
 		return ret;

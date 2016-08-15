@@ -4,15 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import common.Logger;
-
-import core.GlobalOptions;
 import core.ModuleFactory;
 
-public class ModuleOptions {
+public class Options {
 	String module;
 	Map<String, String> options;
 
-	public ModuleOptions(String module) {
+	public Options(String module) {
 		options = new HashMap<String, String>();
 		if ((this.module = ModuleFactory.checkModule(module)) == null) {
 			Logger.error("Module not exist");
@@ -23,7 +21,7 @@ public class ModuleOptions {
 	public void add(String key, String value) {
 		key = key.toUpperCase();
 		value = value.trim();
-		value = value.replace("$MAINDIR", GlobalOptions.getInstance()
+		value = value.replace("$MAINDIR", CommandLine.getInstance()
 				.getOption(Strings.MAINDIR));
 		options.put(key, value);
 	}

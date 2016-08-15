@@ -1,15 +1,15 @@
-package core;
+package core.beans;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class GlobalOptions {
-	private static GlobalOptions instance;
+public class CommandLine {
+	private static CommandLine instance;
 	Map<String, String> options = new HashMap<String, String>();
 
-	public static synchronized GlobalOptions getInstance() {
+	public static synchronized CommandLine getInstance() {
 		if (instance == null) {
-			instance = new GlobalOptions();
+			instance = new CommandLine();
 		}
 		return instance;
 	}

@@ -72,12 +72,8 @@ public abstract class ModuleImpl implements IModule {
 		}
 
 		List<String> ret = Utils.readFile(options.get(Strings.OUTPUT));
-
 		Utils.deleteFile(options.get(Strings.OUTPUT));
 
-		for (String temp : ret) {
-		//	System.out.println(temp);
-		}
 		return ret;
 	}
 }

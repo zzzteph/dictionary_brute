@@ -9,7 +9,7 @@ import java.util.List;
 
 import common.Logger;
 import common.Utils;
-import core.GlobalOptions;
+import core.beans.CommandLine;
 import core.beans.Strings;
 
 public class Suggest extends ModuleImpl {
@@ -33,7 +33,7 @@ public class Suggest extends ModuleImpl {
 		List<String> words = new ArrayList<String>();
 		List<String> swords = new ArrayList<String>();
 
-		if (GlobalOptions.getInstance().getOption(Strings.SUGGEST) == null)
+		if (CommandLine.getInstance().getOption(Strings.SUGGEST) == null)
 			return null;
 		for (String tmp : options.get(Strings.SUGGEST).split(",")) {
 			if (tmp.length() > 1) {
@@ -87,8 +87,12 @@ public class Suggest extends ModuleImpl {
 		PrintWriter writer = null;
 		try {
 			 writer = new PrintWriter(dictName, "UTF-8");
-		} catch (FileNotFoundException | UnsupportedEncodingException e) {
+		} catch (FileNotFoundException e) {
 				Logger.error(e.getMessage());
+		}
+		catch(UnsupportedEncodingException e)
+		{
+			Logger.error(e.getMessage());
 		}
 		for (String tmp : dictionary) {
 			writer.println(tmp);
