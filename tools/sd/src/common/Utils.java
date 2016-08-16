@@ -19,7 +19,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-
 public class Utils {
 	public static void cloneFile(String source, String dest) {
 		InputStream is = null;
@@ -51,34 +50,33 @@ public class Utils {
 		}
 	}
 
-	public static void rebuildInputFile(List<String>results,String InputFile) {
-		
+	public static void rebuildInputFile(List<String> results, String InputFile) {
+
 		List<String> file = readFile(InputFile);
 		for (String crackedPasswords : results) {
 			int i = 0;
 			for (String uncrackedPasswords : file) {
 				if (crackedPasswords.contains(uncrackedPasswords)) {
+					System.out.println(crackedPasswords);
 					file.remove(i);
 					break;
 				}
 				i++;
 			}
 		}
-		
-		writeToFile(InputFile,file);
+
+		writeToFile(InputFile, file);
 
 	}
-	
-	
-	
+
 	public static List<String> readFile(String file) {
 		List<String> ret = new ArrayList<String>();
-		BufferedReader br=null;
+		BufferedReader br = null;
 		try {
-			 br = new BufferedReader(new FileReader(file));
+			br = new BufferedReader(new FileReader(file));
 			String line;
 			while ((line = br.readLine()) != null) {
-				
+
 				if (!ret.contains(line))
 					ret.add(line);
 			}
@@ -89,12 +87,6 @@ public class Utils {
 			System.out.println(ex.getMessage());
 		}
 
-		if(!br.equals(null))
-			try {
-				br.close();
-			} catch (IOException e) {
-				Logger.error(e.getMessage());
-			}
 		return ret;
 	}
 
@@ -108,9 +100,7 @@ public class Utils {
 			writer.close();
 		} catch (FileNotFoundException e) {
 			Logger.error(e.getMessage());
-		}
-		catch(UnsupportedEncodingException e)
-		{
+		} catch (UnsupportedEncodingException e) {
 			Logger.error(e.getMessage());
 		}
 
@@ -127,10 +117,10 @@ public class Utils {
 		return outFile.getAbsolutePath();
 	}
 
-	public static String getInputFile()
-	{
+	public static String getInputFile() {
 		return getOutputFile();
 	}
+
 	public static boolean deleteFile(String filename) {
 		File file = new File(filename);
 

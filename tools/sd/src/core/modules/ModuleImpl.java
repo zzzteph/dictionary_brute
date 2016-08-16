@@ -3,6 +3,7 @@ package core.modules;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +17,7 @@ import core.interfaces.IModule;
 public abstract class ModuleImpl implements IModule {
 
 	protected Process process = null;
-	protected ProcessBuilder builder = null;
+
 	protected Map<String, String> options = new HashMap<String, String>();
 
 	public void setValue(String key, String value) {
@@ -29,48 +30,43 @@ public abstract class ModuleImpl implements IModule {
 
 	public List<String> run() {
 
-		StringBuffer cmd = new StringBuffer();
+		ProcessBuilder command = new ProcessBuilder();
+		List<String> cmd = new ArrayList<String>();
 		options.put(Strings.OUTPUT, Utils.getOutputFile());
-		cmd.append(options.get(Strings.EXEC));
-		cmd.append(" ");
-		cmd.append("--potfile-disable");
-		cmd.append(" ");
-		cmd.append("-m");
-		cmd.append(" ");
-		cmd.append(options.get(Strings.MODULE));
-		cmd.append(" ");
-		cmd.append("-o");
-		cmd.append(" ");
-
-		cmd.append(options.get(Strings.OUTPUT));
+		cmd.add(options.get(Strings.EXEC));
+		cmd.add("--potfile-disable");
+		cmd.add("-m");
+		cmd.add(options.get(Strings.MODULE));
+		cmd.add("-o");
+		cmd.add(options.get(Strings.OUTPUT));
 		if (options.containsKey(Strings.RULES)) {
-			cmd.append(" ");
-			cmd.append("-r");
-			cmd.append(" ");
-			cmd.append(options.get(Strings.RULES));
+			cmd.add("-r");
+			cmd.add(options.get(Strings.RULES));
 		}
-		cmd.append(" ");
-		cmd.append(options.get(Strings.INPUT));
-		cmd.append(" ");
-		cmd.append(options.get(Strings.TAIL));
-		System.out.println(cmd.toString());
-		Process p;
+
+		cmd.add(options.get(Strings.INPUT));
+		cmd.add(options.get(Strings.TAIL));
+		System.out.println("Command" + cmd.toString());
 		try {
-			p = Runtime.getRuntime().exec(cmd.toString());
+			command = new ProcessBuilder(cmd);
 
+			process = command.start();
 			BufferedReader stdOut = new BufferedReader(new InputStreamReader(
-					p.getInputStream()));
+					process.getInputStream()));
 
-			while ((stdOut.readLine()) != null)
-			{
-				if(!p.isAlive())break;
+			while ((stdOut.readLine()) != null) {
+
+				try {
+					process.exitValue();
+					break;
+				} catch (Exception e) {
+				}
 
 			}
 		} catch (IOException e) {
 
 			Logger.error(e.getMessage());
 		}
-
 		List<String> ret = Utils.readFile(options.get(Strings.OUTPUT));
 		Utils.deleteFile(options.get(Strings.OUTPUT));
 

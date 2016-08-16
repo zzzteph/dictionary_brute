@@ -332,6 +332,8 @@ public class Keybordcomb extends ModuleImpl {
 			passwords.add(new Part(tmp));
 		}
 		merged.clear();
+		System.out.println(Double.valueOf(
+				Math.pow(passwords.size(), length + 1)).intValue());
 		generate(passwords, new Part(), length);
 		runExternal();
 		writer.close();
@@ -341,11 +343,14 @@ public class Keybordcomb extends ModuleImpl {
 	}
 
 	private void init_qwerty() {
-		String[] line_init = { "`1234567890-=", "qwertyuiop[]", "asdfghjkl;'", "zxcvbnm,./" };
+		String[] line_init = { "`1234567890-=", "qwertyuiop[]", "asdfghjkl;'",
+				"zxcvbnm,./" };
 
-		String[] upper_init = { "1qaz", "2wsx", "3edc", "4rfv", "5tgb", "6yhn", "7ujm", "8ik,", "9ol.", "0p;/", "-['",
-				"2qaz", "3wsx", "4edc", "5rfv", "6tgb", "7yhn", "8ujm", "9ik,", "0ol.", "-p;/", "=]'/", "-[;.", "0pl,",
-				"9okm", "8ijn", "7uhb", "6ygv", "5tfc", "4rdx", "3esz" };
+		String[] upper_init = { "1qaz", "2wsx", "3edc", "4rfv", "5tgb", "6yhn",
+				"7ujm", "8ik,", "9ol.", "0p;/", "-['", "2qaz", "3wsx", "4edc",
+				"5rfv", "6tgb", "7yhn", "8ujm", "9ik,", "0ol.", "-p;/", "=]'/",
+				"-[;.", "0pl,", "9okm", "8ijn", "7uhb", "6ygv", "5tfc", "4rdx",
+				"3esz" };
 
 		lowercase = "qazwsxedcrfvtgbyhnujmikolp";
 		uppercase = "QAZWSXEDCRFVTGBYHNUJMIKOLP";
@@ -418,9 +423,9 @@ public class Keybordcomb extends ModuleImpl {
 		add("?", "';./\":>?");
 		add(":", "p['/.l;P{\"?>L:");
 		add("\"", "][;/'}{:?\"");
-		line=line_init;
-		upper=upper_init;
-		
+		line = line_init;
+		upper = upper_init;
+
 	}
 
 }

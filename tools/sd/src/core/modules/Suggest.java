@@ -9,14 +9,17 @@ import java.util.List;
 
 import common.Logger;
 import common.Utils;
+
 import core.beans.CommandLine;
 import core.beans.Strings;
 
 public class Suggest extends ModuleImpl {
-	static String[] passwords = { "admin", "adm", "cisco", "manager", "app", "administrator", "agent", "root", "bank",
-			"public", "private", "db", "dba", "oracle", "database", "123456", "123456789", "password", "12345678",
-			"qwerty", "1234567", "1234567890", "1234", "12345", "12345", "123456", "2016", "2015", "2014", "2013",
-			"2011", "2012", "2017", "2018", "wi-fi", "wpa", "wpa2", "wep", "wifi" };
+	static String[] passwords = { "admin", "adm", "cisco", "manager", "app",
+			"administrator", "agent", "root", "bank", "public", "private",
+			"db", "dba", "oracle", "database", "123456", "123456789",
+			"password", "12345678", "qwerty", "1234567", "1234567890", "1234",
+			"12345", "12345", "123456", "2016", "2015", "2014", "2013", "2011",
+			"2012", "2017", "2018", "wi-fi", "wpa", "wpa2", "wep", "wifi" };
 
 	static String[] spec = { "!", "@", "#", "$" };
 	static HashSet<String> dictionary = new HashSet<String>();
@@ -34,7 +37,7 @@ public class Suggest extends ModuleImpl {
 		List<String> swords = new ArrayList<String>();
 
 		if (CommandLine.getInstance().getOption(Strings.SUGGEST) == null)
-			return null;
+			return new ArrayList<String>();
 		for (String tmp : options.get(Strings.SUGGEST).split(",")) {
 			if (tmp.length() > 1) {
 				swords.add(tmp);// test
@@ -45,7 +48,8 @@ public class Suggest extends ModuleImpl {
 		for (String password : passwords) {
 			words.add(password);
 			words.add(password.toUpperCase());
-			words.add(password.substring(0, 1).toUpperCase() + password.substring(1));
+			words.add(password.substring(0, 1).toUpperCase()
+					+ password.substring(1));
 		}
 
 		for (String word : words) {
@@ -86,14 +90,13 @@ public class Suggest extends ModuleImpl {
 		String dictName = Utils.getOutputFile();
 		PrintWriter writer = null;
 		try {
-			 writer = new PrintWriter(dictName, "UTF-8");
+			writer = new PrintWriter(dictName, "UTF-8");
 		} catch (FileNotFoundException e) {
-				Logger.error(e.getMessage());
-		}
-		catch(UnsupportedEncodingException e)
-		{
+			Logger.error(e.getMessage());
+		} catch (UnsupportedEncodingException e) {
 			Logger.error(e.getMessage());
 		}
+		System.out.println("Bypass");
 		for (String tmp : dictionary) {
 			writer.println(tmp);
 			if (!this.options.containsKey(Strings.SIMPLE))
@@ -102,14 +105,12 @@ public class Suggest extends ModuleImpl {
 
 		}
 		this.options.put(Strings.TAIL, dictName);
-		List<String>ret =new ArrayList<String>();
+		List<String> ret = new ArrayList<String>();
 		for (String tmp : super.run()) {
 			ret.add(tmp);
 		}
-		
-		
-		
-	return ret;
+		System.out.println("END");
+		return ret;
 	}
 
 }

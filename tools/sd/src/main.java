@@ -5,8 +5,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
+
 import common.Logger;
 import common.Utils;
+
 import core.Parser;
 import core.Runner;
 import core.beans.CommandLine;
@@ -19,13 +21,14 @@ public class main {
 		CommandLine global = CommandLine.getInstance();
 		String initPath = null;
 		try {
-			initPath = new File(main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath())
+			initPath = new File(main.class.getProtectionDomain()
+					.getCodeSource().getLocation().toURI().getPath())
 					.getAbsolutePath();
 		} catch (URISyntaxException e) {
 			Logger.error(e.getMessage());
 		}
 
-		File config = new File(initPath, "../config.txt");
+		File config = new File(initPath, "../../config.txt");
 
 		BufferedReader br;
 		try {
@@ -49,10 +52,10 @@ public class main {
 
 	}
 
-	void isDone()
-	{
-		
+	void isDone() {
+
 	}
+
 	public static void main(String[] args) {
 
 		CommandLine global = CommandLine.getInstance();
@@ -79,15 +82,16 @@ public class main {
 
 		loadConfig();
 		global.add(Strings.INPUT, Utils.getInputFile());
-		//make input duplication and copy it
+		// make input duplication and copy it
 		Utils.cloneFile(inputFile, global.getOption(Strings.INPUT));
 		Parser parser = Parser.getInstance();
 
 		for (Options ModuleStage : parser.parse("test.xml")) {
-			List<String> result=Runner.getInstance().runModule(ModuleStage);
-			//if(!global.getOption(Strings.MODULE).equalsIgnoreCase("2500"))
-				Utils.rebuildInputFile(result, CommandLine.getInstance().getOption(Strings.INPUT));
-			
+			List<String> result = Runner.getInstance().runModule(ModuleStage);
+			// if(!global.getOption(Strings.MODULE).equalsIgnoreCase("2500"))
+			Utils.rebuildInputFile(result,
+					CommandLine.getInstance().getOption(Strings.INPUT));
+
 		}
 
 		Utils.deleteFile(global.getOption(Strings.INPUT));

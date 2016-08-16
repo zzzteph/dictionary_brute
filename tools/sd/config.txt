@@ -1,0 +1,31 @@
+#RUNTIME EXEC OPTIONS
+
+
+EXEC=/home/steph/hashcat/hashcat-cli64.exe
+MAINDIR=/home/steph/dictionary_brute/tools/roster
+
+#EXEC=D:\hashcat\hashcat-cli64.exe
+#MAINDIR=D:\dictionary_brute
+
+
+
+#KEYBOARD COMB OPTIONS
+KEYBOARD_LOWER_QWERTY=
+~1234567890-+
+ qwertyuiop[]
+ asdfghjkl;'
+ zxcvbnm,./
+
+KEYBOARD_SHIFT_QWERTY= 
+~!@#$%^&*()_+
+ QWERTYUIOP{}
+ ASDFGHJKL:"
+ ZXCVBNM<>?	
+
+KEYBOARD_CAPS_QWERTY=
+`1234567890-=
+ QWERTYUIOP[]\
+ ASDFGHJKL;'
+ ZXCVBNM,./
+
+ 
