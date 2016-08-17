@@ -13,7 +13,7 @@ import core.Parser;
 import core.Runner;
 import core.beans.CommandLine;
 import core.beans.Options;
-import core.beans.Strings;
+import core.beans.Strings.Common;
 
 public class main {
 
@@ -39,7 +39,6 @@ public class main {
 				String[] tmp = line.split("=", 2);
 				if (tmp.length == 2) {
 					tmp[0] = tmp[0].toUpperCase();
-
 					global.add(tmp[0], tmp[1]);
 
 				}
@@ -63,12 +62,12 @@ public class main {
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("-m") || args[i].equals("--module")) {
 				if (i + 1 != args.length) {
-					global.add(Strings.MODULE, args[i + 1]);
+					global.add(Common.MODULE, args[i + 1]);
 					i++;
 				}
 			} else if (args[i].equals("-s") || args[i].equals("--suggest")) {
 				if (i + 1 != args.length) {
-					global.add(Strings.SUGGEST, args[i + 1]);
+					global.add(Common.SUGGEST, args[i + 1]);
 					i++;
 				}
 			}
@@ -81,19 +80,19 @@ public class main {
 		}
 
 		loadConfig();
-		global.add(Strings.INPUT, Utils.getInputFile());
+		global.add(Common.INPUT, Utils.getInputFile());
 		// make input duplication and copy it
-		Utils.cloneFile(inputFile, global.getOption(Strings.INPUT));
+		Utils.cloneFile(inputFile, global.getOption(Common.INPUT));
 		Parser parser = Parser.getInstance();
 
 		for (Options ModuleStage : parser.parse("test.xml")) {
 			List<String> result = Runner.getInstance().runModule(ModuleStage);
 			// if(!global.getOption(Strings.MODULE).equalsIgnoreCase("2500"))
 			Utils.rebuildInputFile(result,
-					CommandLine.getInstance().getOption(Strings.INPUT));
+					CommandLine.getInstance().getOption(Common.INPUT));
 
 		}
 
-		Utils.deleteFile(global.getOption(Strings.INPUT));
+		Utils.deleteFile(global.getOption(Common.INPUT));
 	}
 }

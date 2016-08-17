@@ -1,6 +1,6 @@
-package core.beans;
+package core.beans.Strings;
 
-public interface Strings {
+public interface Common {
 
 	public static final String RULES = "RULES";
 	public static final String MODULE = "MODULE";
@@ -22,7 +22,7 @@ public interface Strings {
 	public static final String REVERSE = "REVERSE";
 	public static final String OPTIMIZATION = "OPTIMIZATION";
 	public static final String KEYBOARD = "KEYBOARD";
-	
+
 	// Bruteforce
 	public static final String BRUTEFORCE = "BRUTEFORCE";
 	public static final String ATTACK_TYPE = "ATTACK_TYPE";
@@ -30,14 +30,11 @@ public interface Strings {
 	public static final String CHARSET_1 = "CHARSET_1";
 	public static final String CHARSET_2 = "CHARSET_2";
 	public static final String CHARSET_3 = "CHARSET_3";
-	
-	
-	
-	
+
+	// Custom
 	public static final String CUSTOM = "CUSTOM";
-	
-	
-	//Suggester
+
+	// Suggester
 	public static final String SUGGEST = "SUGGEST";
 	public static final String SIMPLE = "SIMPLE";
 }

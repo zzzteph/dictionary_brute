@@ -5,6 +5,7 @@ import java.util.Map;
 
 import common.Logger;
 import core.ModuleFactory;
+import core.beans.Strings.Common;
 
 public class Options {
 	String module;
@@ -22,7 +23,7 @@ public class Options {
 		key = key.toUpperCase();
 		value = value.trim();
 		value = value.replace("$MAINDIR", CommandLine.getInstance()
-				.getOption(Strings.MAINDIR));
+				.getOption(Common.MAINDIR));
 		options.put(key, value);
 	}
 

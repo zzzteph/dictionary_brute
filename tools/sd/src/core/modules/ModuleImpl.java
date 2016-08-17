@@ -11,7 +11,7 @@ import java.util.Map;
 import common.Logger;
 import common.Utils;
 
-import core.beans.Strings;
+import core.beans.Strings.Common;
 import core.interfaces.IModule;
 
 public abstract class ModuleImpl implements IModule {
@@ -28,25 +28,30 @@ public abstract class ModuleImpl implements IModule {
 		return this.options.get(key);
 	}
 
+	public void init() {
+
+	}
+
 	public List<String> run() {
 
 		ProcessBuilder command = new ProcessBuilder();
 		List<String> cmd = new ArrayList<String>();
-		options.put(Strings.OUTPUT, Utils.getOutputFile());
-		cmd.add(options.get(Strings.EXEC));
+		options.put(Common.OUTPUT, Utils.getOutputFile());
+		cmd.add(options.get(Common.EXEC));
 		cmd.add("--potfile-disable");
 		cmd.add("-m");
-		cmd.add(options.get(Strings.MODULE));
+		cmd.add(options.get(Common.MODULE));
 		cmd.add("-o");
-		cmd.add(options.get(Strings.OUTPUT));
-		if (options.containsKey(Strings.RULES)) {
+		cmd.add(options.get(Common.OUTPUT));
+		if (options.containsKey(Common.RULES)) {
 			cmd.add("-r");
-			cmd.add(options.get(Strings.RULES));
+			cmd.add(options.get(Common.RULES));
 		}
 
-		cmd.add(options.get(Strings.INPUT));
-		cmd.add(options.get(Strings.TAIL));
+		cmd.add(options.get(Common.INPUT));
+		cmd.add(options.get(Common.TAIL));
 		System.out.println("Command" + cmd.toString());
+
 		try {
 			command = new ProcessBuilder(cmd);
 
@@ -67,8 +72,8 @@ public abstract class ModuleImpl implements IModule {
 
 			Logger.error(e.getMessage());
 		}
-		List<String> ret = Utils.readFile(options.get(Strings.OUTPUT));
-		Utils.deleteFile(options.get(Strings.OUTPUT));
+		List<String> ret = Utils.readFile(options.get(Common.OUTPUT));
+		Utils.deleteFile(options.get(Common.OUTPUT));
 
 		return ret;
 	}

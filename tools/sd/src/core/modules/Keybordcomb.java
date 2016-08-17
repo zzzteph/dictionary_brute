@@ -13,7 +13,7 @@ import java.util.Map;
 import common.Logger;
 import common.Utils;
 
-import core.beans.Strings;
+import core.beans.Strings.Common;
 import core.modules.helpers.Part;
 
 public class Keybordcomb extends ModuleImpl {
@@ -200,7 +200,7 @@ public class Keybordcomb extends ModuleImpl {
 
 	void runExternal() {
 
-		this.options.put(Strings.TAIL, temp_name);
+		this.options.put(Common.TAIL, temp_name);
 		for (String tmp : super.run()) {
 			ret.add(tmp);
 		}
@@ -286,25 +286,25 @@ public class Keybordcomb extends ModuleImpl {
 		Integer length = 3;
 		Integer partsmax = 0;
 		merged = new HashSet<String>();
-		if (options.get(Strings.KEYBOARD).equalsIgnoreCase("qwerty")) {
+		if (options.get(Common.KEYBOARD).equalsIgnoreCase("qwerty")) {
 			init_qwerty();
 		} else {
 			Logger.error("No such keyboard");
 		}
 
-		if (options.get(Strings.TYPE) != null)
-			type = Integer.parseInt(options.get(Strings.TYPE));
-		if (options.get(Strings.PARTS) != null)
-			parts = Integer.parseInt(options.get(Strings.PARTS));
-		if (options.get(Strings.LENGTH) != null)
-			length = Integer.parseInt(options.get(Strings.LENGTH));
-		if (options.get(Strings.MAX_PARTS) != null)
-			partsmax = Integer.parseInt(options.get(Strings.MAX_PARTS));
-		if (Boolean.parseBoolean(options.get(Strings.POLICY)))
+		if (options.get(Common.TYPE) != null)
+			type = Integer.parseInt(options.get(Common.TYPE));
+		if (options.get(Common.PARTS) != null)
+			parts = Integer.parseInt(options.get(Common.PARTS));
+		if (options.get(Common.LENGTH) != null)
+			length = Integer.parseInt(options.get(Common.LENGTH));
+		if (options.get(Common.MAX_PARTS) != null)
+			partsmax = Integer.parseInt(options.get(Common.MAX_PARTS));
+		if (Boolean.parseBoolean(options.get(Common.POLICY)))
 			policy = true;
-		if (Boolean.parseBoolean(options.get(Strings.REVERSE)))
+		if (Boolean.parseBoolean(options.get(Common.REVERSE)))
 			reverse = true;
-		if (Boolean.parseBoolean(options.get(Strings.OPTIMIZATION)))
+		if (Boolean.parseBoolean(options.get(Common.OPTIMIZATION)))
 			optimization = true;
 
 		temp_name = Utils.getOutputFile();

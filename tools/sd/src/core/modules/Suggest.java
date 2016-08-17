@@ -11,23 +11,27 @@ import common.Logger;
 import common.Utils;
 
 import core.beans.CommandLine;
-import core.beans.Strings;
+import core.beans.Strings.Common;
 
 public class Suggest extends ModuleImpl {
-	static String[] passwords = { "admin", "adm", "cisco", "manager", "app",
+	String[] passwords = { "admin", "adm", "cisco", "manager", "app",
 			"administrator", "agent", "root", "bank", "public", "private",
 			"db", "dba", "oracle", "database", "123456", "123456789",
 			"password", "12345678", "qwerty", "1234567", "1234567890", "1234",
 			"12345", "12345", "123456", "2016", "2015", "2014", "2013", "2011",
 			"2012", "2017", "2018", "wi-fi", "wpa", "wpa2", "wep", "wifi" };
 
-	static String[] spec = { "!", "@", "#", "$" };
-	static HashSet<String> dictionary = new HashSet<String>();
+	String[] spec = { "!", "@", "#", "$" };
+	HashSet<String> dictionary = new HashSet<String>();
 
-	static void add(String tmp) {
+	void add(String tmp) {
 
 		if (!dictionary.contains(tmp))
 			dictionary.add(tmp);
+
+	}
+
+	public void init() {
 
 	}
 
@@ -36,9 +40,9 @@ public class Suggest extends ModuleImpl {
 		List<String> words = new ArrayList<String>();
 		List<String> swords = new ArrayList<String>();
 
-		if (CommandLine.getInstance().getOption(Strings.SUGGEST) == null)
+		if (CommandLine.getInstance().getOption(Common.SUGGEST) == null)
 			return new ArrayList<String>();
-		for (String tmp : options.get(Strings.SUGGEST).split(",")) {
+		for (String tmp : options.get(Common.SUGGEST).split(",")) {
 			if (tmp.length() > 1) {
 				swords.add(tmp);// test
 				swords.add(tmp.toUpperCase());
@@ -99,12 +103,12 @@ public class Suggest extends ModuleImpl {
 		System.out.println("Bypass");
 		for (String tmp : dictionary) {
 			writer.println(tmp);
-			if (!this.options.containsKey(Strings.SIMPLE))
+			if (!this.options.containsKey(Common.SIMPLE))
 				for (Integer i = 0; i < 100; i++)
 					writer.println(tmp + i.toString());
 
 		}
-		this.options.put(Strings.TAIL, dictName);
+		this.options.put(Common.TAIL, dictName);
 		List<String> ret = new ArrayList<String>();
 		for (String tmp : super.run()) {
 			ret.add(tmp);

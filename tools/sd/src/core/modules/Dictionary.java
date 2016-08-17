@@ -4,14 +4,14 @@ import java.util.List;
 
 import common.Logger;
 
-import core.beans.Strings;
+import core.beans.Strings.Common;
 
 public class Dictionary extends ModuleImpl {
 
 	public List<String> run() {
-		if (!this.options.containsKey(Strings.DICTIONARY))
+		if (!this.options.containsKey(Common.DICTIONARY))
 			Logger.error("NO DICTIONARY SET");
-		this.options.put(Strings.TAIL, options.get(Strings.DICTIONARY));
+		this.options.put(Common.TAIL, options.get(Common.DICTIONARY));
 		return super.run();
 	}
 
