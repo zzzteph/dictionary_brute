@@ -3,25 +3,23 @@ package core.modules;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
 import common.Logger;
 import common.Utils;
+
 import core.ModuleImpl;
 import core.beans.CommandLine;
 import core.beans.Strings.Common;
+import core.beans.Strings.SuggestConfig;
 
 public class Suggest extends ModuleImpl {
-	String[] passwords = { "admin", "adm", "cisco", "manager", "app",
-			"administrator", "agent", "root", "bank", "public", "private",
-			"db", "dba", "oracle", "database", "123456", "123456789",
-			"password", "12345678", "qwerty", "1234567", "1234567890", "1234",
-			"12345", "12345", "123456", "2016", "2015", "2014", "2013", "2011",
-			"2012", "2017", "2018", "wi-fi", "wpa", "wpa2", "wep", "wifi" };
+	List<String> passwords = new ArrayList<String>();
 
-	String[] spec = { "!", "@", "#", "$" };
+	List<String> spec = new ArrayList<String>();
 	HashSet<String> dictionary = new HashSet<String>();
 
 	void add(String tmp) {
@@ -33,22 +31,73 @@ public class Suggest extends ModuleImpl {
 
 	public void init() {
 
+		passwords = Utils.readFileUniq(Paths.get(
+				CommandLine.getInstance().getOption(Common.CONFIG),
+				this.getClass().getSimpleName().toLowerCase(),
+				SuggestConfig.WORDS).toString());
+		spec = Utils.readFileUniq(Paths.get(
+				CommandLine.getInstance().getOption(Common.CONFIG),
+				this.getClass().getSimpleName().toLowerCase(),
+				SuggestConfig.SPEC).toString());
+
 	}
 
 	public List<String> run() {
-
-		List<String> words = new ArrayList<String>();
-		List<String> swords = new ArrayList<String>();
+		init();
+		HashSet<String> words = new HashSet<String>();
+		HashSet<String> swords = new HashSet<String>();
 
 		if (CommandLine.getInstance().getOption(Common.SUGGEST) == null)
 			return new ArrayList<String>();
+		System.out.println(options.get(Common.SUGGEST));
 		for (String tmp : options.get(Common.SUGGEST).split(",")) {
 			if (tmp.length() > 1) {
 				swords.add(tmp);// test
 				swords.add(tmp.toUpperCase());
 				swords.add(tmp.substring(0, 1).toUpperCase() + tmp.substring(1));
+
+				String leet = tmp.replace("o", "0").replace("O", "0");
+				swords.add(leet);
+				swords.add(leet.toUpperCase());
+				swords.add(leet.substring(0, 1).toUpperCase()
+						+ tmp.substring(1));
+				leet = tmp.replace("a", "4").replace("A", "4");
+				swords.add(leet);
+				swords.add(leet.toUpperCase());
+				swords.add(leet.substring(0, 1).toUpperCase()
+						+ tmp.substring(1));
+				leet = tmp.replace("a", "@").replace("a", "@");
+				swords.add(leet);
+				swords.add(leet.toUpperCase());
+				swords.add(leet.substring(0, 1).toUpperCase()
+						+ tmp.substring(1));
+				leet = tmp.replace("s", "$").replace("S", "$");
+				swords.add(leet);
+				swords.add(leet.toUpperCase());
+				swords.add(leet.substring(0, 1).toUpperCase()
+						+ tmp.substring(1));
+
+				leet = tmp.replace("o", "0").replace("O", "0")
+						.replace("a", "4").replace("A", "4").replace("s", "$")
+						.replace("S", "$");
+
+				swords.add(leet);// test
+				swords.add(leet.toUpperCase());
+				swords.add(leet.substring(0, 1).toUpperCase()
+						+ tmp.substring(1));
+				leet = tmp.replace("o", "0").replace("O", "0")
+						.replace("a", "@").replace("A", "@").replace("s", "$")
+						.replace("S", "$");
+
+				swords.add(leet);// test
+				swords.add(leet.toUpperCase());
+				swords.add(leet.substring(0, 1).toUpperCase()
+						+ tmp.substring(1));
 			}
 		}
+
+		for (String word : swords)
+			add(word);
 		for (String password : passwords) {
 			words.add(password);
 			words.add(password.toUpperCase());
@@ -68,29 +117,6 @@ public class Suggest extends ModuleImpl {
 
 			}
 		}
-
-		for (String word : words) {
-			for (String word2 : words) {
-				for (String sword : swords) {
-					add(word + sword + word2);
-					add(word2 + sword + word);
-					add(word + word2 + sword);
-					add(word2 + word + sword);
-					add(sword + word2 + word);
-					add(sword + word + word2);
-					for (String sep : spec) {
-						add(word + sword + word2 + sep);
-						add(word2 + sword + word + sep);
-						add(word + word2 + sword + sep);
-						add(word2 + word + sword + sep);
-						add(sword + word2 + word + sep);
-						add(sword + word + word2 + sep);
-
-					}
-
-				}
-			}
-		}
 		String dictName = Utils.getOutputFile();
 		PrintWriter writer = null;
 		try {
@@ -100,20 +126,20 @@ public class Suggest extends ModuleImpl {
 		} catch (UnsupportedEncodingException e) {
 			Logger.error(e.getMessage());
 		}
-		System.out.println("Bypass");
 		for (String tmp : dictionary) {
 			writer.println(tmp);
-			if (!this.options.containsKey(Common.SIMPLE))
-				for (Integer i = 0; i < 100; i++)
-					writer.println(tmp + i.toString());
+
+			for (Integer i = 0; i < 100; i++)
+				writer.println(tmp + i.toString());
 
 		}
-		this.options.put(Common.TAIL, dictName);
+		writer.close();
+		this.tail.add(dictName);
 		List<String> ret = new ArrayList<String>();
 		for (String tmp : super.run()) {
 			ret.add(tmp);
 		}
-		System.out.println("END");
+		Utils.deleteFile(dictName);
 		return ret;
 	}
 

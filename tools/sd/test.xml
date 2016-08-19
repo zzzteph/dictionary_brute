@@ -1,64 +1,22 @@
 <root>
-	
-	    <module class="mask">
-        <charset_1>?l</charset_1>
-		<mask>?1?1?1?1</mask>
-		
+
+	<module class="keyboard">
+	<KEYBOARD>qwerty</KEYBOARD>
+	</module>
+	<module class="suggest">
+	</module>
+
+	<module class="mask">
+        <mask>?u?l?l?l?d?d?d?d</mask>
     </module>
-    <module class="suggest">
-	<simple>true</simple>
+
+
+	<module class="dictionary">
+        <dictionary>/home/steph/pentest/dictionaries/hashesorg</dictionary>
     </module>
   
-    <module class="keybordcomb">
-		<keyboard>qwerty</keyboard>
-        <type>1</type>
-        <parts>4</parts>
-        <length>2</length>
-        <reverse>true</reverse>
-    </module>
-	    <module class="keybordcomb">
-		<keyboard>qwerty</keyboard>
-        <type>1</type>
-        <parts>4</parts>
-        <length>3</length>
-        <reverse>true</reverse>
-		<OPTIMIZATION>true</OPTIMIZATION>
-    </module>
-		    <module class="keybordcomb">
-		<keyboard>qwerty</keyboard>
-        <type>1</type>
-        <parts>3</parts>
-        <length>4</length>
-        <reverse>true</reverse>
-		<OPTIMIZATION>true</OPTIMIZATION>
-    </module>
-	
-	
-	    <module class="keybordcomb">
-		<keyboard>qwerty</keyboard>
-        <type>0</type>
-        <parts>4</parts>
-        <length>2</length>
-        <reverse>true</reverse>
-    </module>
-	    <module class="keybordcomb">
-		<keyboard>qwerty</keyboard>
-        <type>0</type>
-        <parts>4</parts>
-        <length>3</length>
-        <reverse>true</reverse>
-		<OPTIMIZATION>true</OPTIMIZATION>
-    </module>
-	  <module class="dictionary">
-        <dictionary>$MAINDIR/../../dictionary.dic</dictionary>
-    </module>
-    <module class="dictionary">
-        <dictionary>$MAINDIR/dictionary.dic</dictionary>
-        <rules>$MAINDIR/rules/common_rules/fast.rules</rules>
-    </module>
-    <module class="dictionary">
-        <dictionary>$MAINDIR/dictionary.dic</dictionary>
-        <rules>$MAINDIR/rules/common_rules/common.rules</rules>
-    </module>
+    
+
+
 
 </root>

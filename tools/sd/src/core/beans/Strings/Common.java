@@ -2,9 +2,8 @@ package core.beans.Strings;
 
 public interface Common {
 
-	public static final String CONFIG="CONFIG";//path to config folder
-	
-	
+	public static final String CONFIG = "CONFIG";// path to config folder
+
 	public static final String RULES = "RULES";
 	public static final String MODULE = "MODULE";
 	public static final String MAINDIR = "MAINDIR";
@@ -16,7 +15,7 @@ public interface Common {
 	// dictionary
 	public static final String DICTIONARY = "DICTIONARY";
 
-	// Qwertycomb
+	// Keyboard
 	public static final String TYPE = "TYPE";
 	public static final String PARTS = "PARTS";
 	public static final String LENGTH = "LENGTH";
@@ -39,5 +38,5 @@ public interface Common {
 
 	// Suggester
 	public static final String SUGGEST = "SUGGEST";
-	public static final String SIMPLE = "SIMPLE";
+
 }

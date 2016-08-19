@@ -52,7 +52,7 @@ public class Utils {
 
 	public static void rebuildInputFile(List<String> results, String InputFile) {
 
-		List<String> file = readFile(InputFile);
+		List<String> file = readFileUniq(InputFile);
 		for (String crackedPasswords : results) {
 			int i = 0;
 			for (String uncrackedPasswords : file) {
@@ -69,7 +69,7 @@ public class Utils {
 
 	}
 
-	public static List<String> readFile(String file) {
+	public static List<String> readFileUniq(String file) {
 		List<String> ret = new ArrayList<String>();
 		BufferedReader br = null;
 		try {
@@ -79,6 +79,26 @@ public class Utils {
 
 				if (!ret.contains(line))
 					ret.add(line);
+			}
+			br.close();
+		} catch (FileNotFoundException ex) {
+			System.out.println(ex.getMessage());
+		} catch (IOException ex) {
+			System.out.println(ex.getMessage());
+		}
+
+		return ret;
+	}
+
+	public static List<String> readFile(String file) {
+		List<String> ret = new ArrayList<String>();
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(file));
+			String line;
+			while ((line = br.readLine()) != null) {
+
+				ret.add(line);
 			}
 			br.close();
 		} catch (FileNotFoundException ex) {

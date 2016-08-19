@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,14 +13,16 @@ import java.util.Map;
 
 import common.Logger;
 import common.Utils;
+
 import core.ModuleImpl;
+import core.beans.CommandLine;
 import core.beans.Strings.Common;
 import core.modules.helpers.Part;
 
-public class Keybord extends ModuleImpl {
+public class Keyboard extends ModuleImpl {
 
-	String[] line = {};
-	String[] upper = {};
+	HashSet<String> line = new HashSet<String>();
+	HashSet<String> upper = new HashSet<String>();
 
 	HashSet<String> merged;
 	HashSet<Part> passwords;
@@ -34,9 +37,7 @@ public class Keybord extends ModuleImpl {
 	Boolean policy = false;
 	Boolean reverse = false;
 	Boolean optimization = false;
-	String lowercase;
-	String uppercase;
-	String digits = "1234567890";
+
 	Integer count = 0;
 	static Map<String, HashSet<String>> links = new HashMap<String, HashSet<String>>();
 	List<String> ret = new ArrayList<String>();
@@ -279,18 +280,83 @@ public class Keybord extends ModuleImpl {
 
 	}
 
+	List<String> buildUpper(List<String> keyboard) {
+		List<String> ret = new ArrayList<String>();
+		for (int i = 0; i < keyboard.get(0).length(); i++) {
+			StringBuffer temp = new StringBuffer();
+			for (int j = 0; j < keyboard.size(); j++) {
+				temp.append(keyboard.get(j).charAt(i));
+			}
+			if (temp.toString().contains(" "))
+				continue;
+			ret.add(temp.toString());
+		}
+
+		for (int i = keyboard.get(0).length() - 1; i > 0; i--) {
+			StringBuffer temp = new StringBuffer();
+			for (int j = 0; j < keyboard.size(); j++) {
+				if (i - j < 0)
+					break;
+				temp.append(keyboard.get(j).charAt(i - j));
+			}
+			if (temp.toString().contains(" "))
+				continue;
+			if (temp.toString().length() != keyboard.size())
+				continue;
+
+			ret.add(temp.toString());
+		}
+		return ret;
+	}
+
+	public void init(String keyboard) {
+		List<String> keyBoards = Utils.readFile(Paths.get(
+				CommandLine.getInstance().getOption(Common.CONFIG),
+				this.getClass().getSimpleName().toLowerCase(),
+				keyboard + ".txt").toString());
+
+		List<String> lowerCase = new ArrayList<String>();
+		List<String> upperCase = new ArrayList<String>();
+		List<String> capslockCase = new ArrayList<String>();
+		int keyBoardType = 0;
+		for (String tmp : keyBoards) {
+			if (tmp.length() <= 1) {
+				keyBoardType++;
+			} else {
+				if (keyBoardType == 0)
+					lowerCase.add(tmp);
+				if (keyBoardType == 1)
+					upperCase.add(tmp);
+				if (keyBoardType == 2)
+					capslockCase.add(tmp);
+			}
+		}
+
+		for (String part : buildUpper(lowerCase)) {
+			upper.add(part);
+		}
+		for (String part : buildUpper(upperCase)) {
+			upper.add(part);
+		}
+		for (String part : buildUpper(capslockCase)) {
+			upper.add(part);
+		}
+
+		for (String part : upper) {
+			System.out.println(part);
+		}
+		System.exit(0);
+	}
+
 	public List<String> run() {
 
 		Integer type = 0;
 		Integer parts = 3;
 		Integer length = 3;
-		Integer partsmax = 0;
+
 		merged = new HashSet<String>();
-		if (options.get(Common.KEYBOARD).equalsIgnoreCase("qwerty")) {
-			init_qwerty();
-		} else {
-			Logger.error("No such keyboard");
-		}
+
+		init(options.get(Common.KEYBOARD));
 
 		if (options.get(Common.TYPE) != null)
 			type = Integer.parseInt(options.get(Common.TYPE));
@@ -298,8 +364,7 @@ public class Keybord extends ModuleImpl {
 			parts = Integer.parseInt(options.get(Common.PARTS));
 		if (options.get(Common.LENGTH) != null)
 			length = Integer.parseInt(options.get(Common.LENGTH));
-		if (options.get(Common.MAX_PARTS) != null)
-			partsmax = Integer.parseInt(options.get(Common.MAX_PARTS));
+
 		if (Boolean.parseBoolean(options.get(Common.POLICY)))
 			policy = true;
 		if (Boolean.parseBoolean(options.get(Common.REVERSE)))
@@ -317,14 +382,8 @@ public class Keybord extends ModuleImpl {
 		} catch (UnsupportedEncodingException e) {
 			Logger.error(e.getMessage());
 		}
-		if (partsmax != 0) {
 
-			for (int i = parts; i <= partsmax; i++) {
-				init(type, i);
-			}
-		} else {
-			init(type, parts);
-		}
+		init(type, parts);
 
 		length = length - 1;// Human readable
 		passwords = new HashSet<Part>();
@@ -343,18 +402,7 @@ public class Keybord extends ModuleImpl {
 	}
 
 	private void init_qwerty() {
-		String[] line_init = { "`1234567890-=", "qwertyuiop[]", "asdfghjkl;'",
-				"zxcvbnm,./" };
 
-		String[] upper_init = { "1qaz", "2wsx", "3edc", "4rfv", "5tgb", "6yhn",
-				"7ujm", "8ik,", "9ol.", "0p;/", "-['", "2qaz", "3wsx", "4edc",
-				"5rfv", "6tgb", "7yhn", "8ujm", "9ik,", "0ol.", "-p;/", "=]'/",
-				"-[;.", "0pl,", "9okm", "8ijn", "7uhb", "6ygv", "5tfc", "4rdx",
-				"3esz" };
-
-		lowercase = "qazwsxedcrfvtgbyhnujmikolp";
-		uppercase = "QAZWSXEDCRFVTGBYHNUJMIKOLP";
-		digits = "1234567890";
 		add("`", "`~1!");
 		add("~", "`~1!");
 		add("0", "_-po90");
@@ -423,8 +471,8 @@ public class Keybord extends ModuleImpl {
 		add("?", "';./\":>?");
 		add(":", "p['/.l;P{\"?>L:");
 		add("\"", "][;/'}{:?\"");
-		line = line_init;
-		upper = upper_init;
+		// line = line_init;
+		// upper = upper_init;
 
 	}
 

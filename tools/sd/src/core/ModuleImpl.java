@@ -15,6 +15,7 @@ import core.interfaces.IModule;
 public abstract class ModuleImpl implements IModule {
 
 	protected Process process = null;
+	public List<String> tail = new ArrayList<String>();
 
 	protected boolean isRunning() {
 		try {
@@ -56,21 +57,23 @@ public abstract class ModuleImpl implements IModule {
 		}
 
 		cmd.add(options.get(Common.INPUT));
-		cmd.add(options.get(Common.TAIL));
+		for (String addOptions : tail) {
+			cmd.add(addOptions);
+		}
 		System.out.println("Command" + cmd.toString());
 
 		try {
 			command = new ProcessBuilder(cmd);
 			process = command.start();
-
-			while (isRunning())
-				;
-
+			int exitVal = process.waitFor();
+			System.out.println("Process exited with value:" + exitVal);
 		} catch (IOException e) {
 
 			Logger.error(e.getMessage());
+		} catch (InterruptedException e) {
+			Logger.error(e.getMessage());
 		}
-		List<String> ret = Utils.readFile(options.get(Common.OUTPUT));
+		List<String> ret = Utils.readFileUniq(options.get(Common.OUTPUT));
 		Utils.deleteFile(options.get(Common.OUTPUT));
 
 		return ret;

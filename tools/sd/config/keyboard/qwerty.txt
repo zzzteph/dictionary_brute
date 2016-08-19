@@ -1,14 +1,15 @@
-`1234567890-=\
+`1234567890-= 
  qwertyuiop[] 
  asdfghjkl;'  
- zxcvbnm,./
+ zxcvbnm,./   
 
-`1234567890-=\
- QWERTYUIOP[] 
+~!@#$%^&*()_+ 
+ QWERTYUIOP{} 
+ ASDFGHJKL:"  
+ ZXCVBNM<>?   
+
+`1234567890-= 
+ QWERTYUIOP[]\
  ASDFGHJKL;'  
  ZXCVBNM,./   
 
-~!@#$%^&*()_+|
- QWERTYUIOP[] 
- ASDFGHJKL;'  
- ZXCVBNM,./   
