@@ -12,11 +12,11 @@ import java.util.Map;
 
 import common.Logger;
 import common.Utils;
-
+import core.ModuleImpl;
 import core.beans.Strings.Common;
 import core.modules.helpers.Part;
 
-public class Keybordcomb extends ModuleImpl {
+public class Keybord extends ModuleImpl {
 
 	String[] line = {};
 	String[] upper = {};

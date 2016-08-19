@@ -2,6 +2,9 @@ package core.beans.Strings;
 
 public interface Common {
 
+	public static final String CONFIG="CONFIG";//path to config folder
+	
+	
 	public static final String RULES = "RULES";
 	public static final String MODULE = "MODULE";
 	public static final String MAINDIR = "MAINDIR";

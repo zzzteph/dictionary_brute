@@ -3,7 +3,7 @@ package core.modules;
 import java.util.List;
 
 import common.Logger;
-
+import core.ModuleImpl;
 import core.beans.Strings.Common;
 
 public class Dictionary extends ModuleImpl {

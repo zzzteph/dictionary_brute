@@ -17,22 +17,15 @@ import core.beans.Strings.Common;
 
 public class main {
 
-	static void loadConfig() {
+	static void loadConfig(String configPath) {
 		CommandLine global = CommandLine.getInstance();
-		String initPath = null;
-		try {
-			initPath = new File(main.class.getProtectionDomain()
-					.getCodeSource().getLocation().toURI().getPath())
-					.getAbsolutePath();
-		} catch (URISyntaxException e) {
-			Logger.error(e.getMessage());
-		}
-
-		File config = new File(initPath, "../../config.txt");
+		
+		File config = new File(configPath,"config.txt");
 
 		BufferedReader br;
 		try {
 			br = new BufferedReader(new FileReader(config.getAbsolutePath()));
+			
 			String line;
 			while ((line = br.readLine()) != null) {
 
@@ -60,26 +53,34 @@ public class main {
 		CommandLine global = CommandLine.getInstance();
 		String inputFile = null;
 		for (int i = 0; i < args.length; i++) {
-			if (args[i].equals("-m") || args[i].equals("--module")) {
-				if (i + 1 != args.length) {
+			
+			if (("-c").equals(args[i]) ||("--config").equals(args[i])) {
+			
+				if (i + 1 <= args.length) {
+					global.add(Common.CONFIG, args[i + 1]);
+					i++;
+				}
+			}
+			else if (("-m").equals(args[i]) || ("--module").equals(args[i])) {
+				if (i + 1 <= args.length) {
 					global.add(Common.MODULE, args[i + 1]);
 					i++;
 				}
-			} else if (args[i].equals("-s") || args[i].equals("--suggest")) {
-				if (i + 1 != args.length) {
+			} else if (("-s").equals(args[i]) || ("--suggest").equals(args[i])) {
+				if (i + 1 <= args.length) {
 					global.add(Common.SUGGEST, args[i + 1]);
 					i++;
 				}
 			}
 
 			else {
-				System.out.println(args[i]);
+				System.out.println("INPUT FILE:"+args[i]);
 				inputFile = args[i];
 
 			}
 		}
 
-		loadConfig();
+		loadConfig(global.getOption(Common.CONFIG));
 		global.add(Common.INPUT, Utils.getInputFile());
 		// make input duplication and copy it
 		Utils.cloneFile(inputFile, global.getOption(Common.INPUT));

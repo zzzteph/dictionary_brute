@@ -1,8 +1,6 @@
-package core.modules;
+package core;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +15,15 @@ import core.interfaces.IModule;
 public abstract class ModuleImpl implements IModule {
 
 	protected Process process = null;
+
+	protected boolean isRunning() {
+		try {
+			process.exitValue();
+			return false;
+		} catch (Exception e) {
+		}
+		return true;
+	}
 
 	protected Map<String, String> options = new HashMap<String, String>();
 
@@ -54,20 +61,11 @@ public abstract class ModuleImpl implements IModule {
 
 		try {
 			command = new ProcessBuilder(cmd);
-
 			process = command.start();
-			BufferedReader stdOut = new BufferedReader(new InputStreamReader(
-					process.getInputStream()));
 
-			while ((stdOut.readLine()) != null) {
+			while (isRunning())
+				;
 
-				try {
-					process.exitValue();
-					break;
-				} catch (Exception e) {
-				}
-
-			}
 		} catch (IOException e) {
 
 			Logger.error(e.getMessage());
