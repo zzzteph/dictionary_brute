@@ -17,6 +17,7 @@ import common.Utils;
 import core.ModuleImpl;
 import core.beans.CommandLine;
 import core.beans.Strings.Common;
+import core.beans.Strings.KeyboardConfig;
 import core.modules.helpers.Part;
 
 public class Keyboard extends ModuleImpl {
@@ -32,7 +33,6 @@ public class Keyboard extends ModuleImpl {
 	int size = 0;
 
 	Boolean policy = false;
-	Boolean reverse = false;
 	Boolean optimization = false;
 
 	static Map<String, HashSet<String>> links = new HashMap<String, HashSet<String>>();
@@ -100,20 +100,20 @@ public class Keyboard extends ModuleImpl {
 
 	}
 
-	void init(int type, int size) {
+	void init(String type, int size) {
 
 		List<String> init = new ArrayList<String>();
 
-		if (type == 1) {
+		if (type.equalsIgnoreCase(KeyboardConfig.TYPE_LINE)) {
 			for (String tmp : line)
 				init.add(tmp);
 		}
 
-		if (type == 0) {
+		if (type.equalsIgnoreCase(KeyboardConfig.TYPE_UPPER)) {
 			for (String tmp : upper)
 				init.add(tmp);
 		}
-		if (type == 2) {
+		if (type.equalsIgnoreCase(KeyboardConfig.TYPE_MIXED)) {
 			for (String tmp : upper)
 				init.add(tmp);
 			for (String tmp : line)
@@ -128,23 +128,22 @@ public class Keyboard extends ModuleImpl {
 		}
 		for (String tmp : init) {
 			for (int i = 0; i <= tmp.length() - size; i++) {
-				merged.add(capsed(tmp.substring(i, i + size)));// capslock
+				merged.add(capsed(tmp.substring(i, i + size)));
 			}
 		}
 		for (String tmp : init) {
 			for (int i = 0; i <= tmp.length() - size; i++) {
-				merged.add(shifted(tmp.substring(i, i + size)));// shift
-																// pressed
+				merged.add(shifted(tmp.substring(i, i + size)));
+
 			}
 		}
 
-		if (reverse == true)
-			reverse();
+		reverse();
 
 		for (String tmp : init) {
 			for (int i = 0; i <= tmp.length() - size; i++) {
 
-				merged.add(upperfirst(tmp.substring(i, i + size)));// upperfirts
+				merged.add(upperfirst(tmp.substring(i, i + size)));
 			}
 		}
 
@@ -365,8 +364,6 @@ public class Keyboard extends ModuleImpl {
 
 		if (Boolean.parseBoolean(options.get(Common.POLICY)))
 			policy = true;
-		if (Boolean.parseBoolean(options.get(Common.REVERSE)))
-			reverse = true;
 		if (Boolean.parseBoolean(options.get(Common.OPTIMIZATION)))
 			optimization = true;
 
