@@ -24,7 +24,6 @@ public class Keyboard extends ModuleImpl {
 
 	HashSet<String> line = new HashSet<String>();
 	HashSet<String> upper = new HashSet<String>();
-
 	HashSet<String> merged;
 	HashSet<Part> passwords;
 
@@ -37,16 +36,24 @@ public class Keyboard extends ModuleImpl {
 
 	static Map<String, HashSet<String>> links = new HashMap<String, HashSet<String>>();
 	List<String> ret = new ArrayList<String>();
+	List<String> lowerCase = new ArrayList<String>();
+	List<String> upperCase = new ArrayList<String>();
+	List<String> capslockCase = new ArrayList<String>();
 
 	char shift(char c) {
+		int i = 0;
+		int j = 0;
 
-		return 'c';
+		for (i = 0; i < lowerCase.size(); i++) {
+			for (j = 0; j < lowerCase.get(i).length(); j++) {
+				if (lowerCase.get(i).charAt(j) == c) {
+					return upperCase.get(i).charAt(j);
+				}
+			}
+		}
+		// NO SHIFT FOUND
+		return c;
 
-	}
-
-	String capsed(String part) {
-
-		return part.toUpperCase();
 	}
 
 	String shifted(String part) {
@@ -100,20 +107,22 @@ public class Keyboard extends ModuleImpl {
 
 	}
 
-	void init(String type, int size) {
+	void buildParts(String type, int size) {
 
 		List<String> init = new ArrayList<String>();
 
-		if (type.equalsIgnoreCase(KeyboardConfig.TYPE_LINE)) {
+		if (type.equalsIgnoreCase(KeyboardConfig.LINE)) {
+
 			for (String tmp : line)
 				init.add(tmp);
+
 		}
 
-		if (type.equalsIgnoreCase(KeyboardConfig.TYPE_UPPER)) {
+		if (type.equalsIgnoreCase(KeyboardConfig.UPPER)) {
 			for (String tmp : upper)
 				init.add(tmp);
 		}
-		if (type.equalsIgnoreCase(KeyboardConfig.TYPE_MIXED)) {
+		if (type.equalsIgnoreCase(KeyboardConfig.MIXED)) {
 			for (String tmp : upper)
 				init.add(tmp);
 			for (String tmp : line)
@@ -124,11 +133,6 @@ public class Keyboard extends ModuleImpl {
 			for (int i = 0; i <= tmp.length() - size; i++) {
 
 				merged.add(tmp.substring(i, i + size));
-			}
-		}
-		for (String tmp : init) {
-			for (int i = 0; i <= tmp.length() - size; i++) {
-				merged.add(capsed(tmp.substring(i, i + size)));
 			}
 		}
 		for (String tmp : init) {
@@ -147,11 +151,14 @@ public class Keyboard extends ModuleImpl {
 			}
 		}
 
+		System.out.println(merged.size());
+
 	}
 
 	void runExternal() {
 
-		this.options.put(Common.TAIL, tempName);
+		this.tail.clear();
+		this.tail.add(tempName);
 		for (String tmp : super.run()) {
 			ret.add(tmp);
 		}
@@ -161,7 +168,6 @@ public class Keyboard extends ModuleImpl {
 		if (size > 10000000) {
 
 			writer.close();
-
 			runExternal();
 			size = 0;
 			Utils.deleteFile(tempName);
@@ -265,9 +271,9 @@ public class Keyboard extends ModuleImpl {
 				this.getClass().getSimpleName().toLowerCase(),
 				keyboard + ".txt").toString());
 
-		List<String> lowerCase = new ArrayList<String>();
-		List<String> upperCase = new ArrayList<String>();
-		List<String> capslockCase = new ArrayList<String>();
+		lowerCase = new ArrayList<String>();
+		upperCase = new ArrayList<String>();
+		capslockCase = new ArrayList<String>();
 		int keyBoardType = 0;
 		for (String tmp : keyBoards) {
 			if (tmp.length() <= 1) {
@@ -292,24 +298,41 @@ public class Keyboard extends ModuleImpl {
 			upper.add(part);
 		}
 
-		// building chains lowercase
+		// BUILD LOWER
 
-		for (int i = 0; i < lowerCase.get(0).length(); i++) {
-			for (int j = 0; j < lowerCase.size(); j++) {
-				if (lowerCase.get(j).charAt(i) != ' ') {
+		for (String parts : lowerCase)
+			line.add(parts.replace(" ", ""));
+
+		for (String parts : upperCase)
+			line.add(parts.replace(" ", ""));
+
+		for (String parts : capslockCase)
+			line.add(parts.replace(" ", ""));
+
+		buildLinks(lowerCase, upperCase, capslockCase);
+		buildLinks(upperCase, lowerCase, capslockCase);
+		buildLinks(capslockCase, upperCase, lowerCase);
+
+	}
+
+	private void buildLinks(List<String> mainCase, List<String> addCase,
+			List<String> addCase2) {
+
+		// building chains lowercase
+		for (int i = 0; i < mainCase.get(0).length(); i++) {
+			for (int j = 0; j < mainCase.size(); j++) {
+				if (mainCase.get(j).charAt(i) != ' ') {
 
 					StringBuffer temp = new StringBuffer();
-					temp.append(buildLinks(lowerCase, i, j));
-					temp.append(buildLinks(upperCase, i, j));
-					temp.append(buildLinks(capslockCase, i, j));
-
-					add(String.valueOf(lowerCase.get(j).charAt(i)),
+					temp.append(buildLinks(mainCase, i, j));
+					temp.append(buildLinks(addCase, i, j));
+					temp.append(buildLinks(addCase2, i, j));
+					add(String.valueOf(mainCase.get(j).charAt(i)),
 							Utils.cleanStringDuplicateChars(temp.toString()));
 				}
 			}
 		}
 
-		System.exit(0);
 	}
 
 	private String buildLinks(List<String> keyBoard, int i, int j) {
@@ -333,7 +356,7 @@ public class Keyboard extends ModuleImpl {
 			ret.append(keyBoard.get(j + 1).charAt(i));
 
 		if (j - 1 >= 0)
-			if (i + 1 <= keyBoard.get(0).length())
+			if (i + 1 < keyBoard.get(0).length())
 				ret.append(keyBoard.get(j - 1).charAt(i + 1));
 		if (i + 1 < keyBoard.get(0).length())
 			ret.append(keyBoard.get(j).charAt(i + 1));
@@ -347,7 +370,7 @@ public class Keyboard extends ModuleImpl {
 
 	public List<String> run() {
 
-		Integer type = 0;
+		String type = KeyboardConfig.LINE;
 		Integer parts = 3;
 		Integer length = 3;
 
@@ -356,7 +379,7 @@ public class Keyboard extends ModuleImpl {
 		init(options.get(Common.KEYBOARD));
 
 		if (options.get(Common.TYPE) != null)
-			type = Integer.parseInt(options.get(Common.TYPE));
+			type = options.get(Common.TYPE);
 		if (options.get(Common.PARTS) != null)
 			parts = Integer.parseInt(options.get(Common.PARTS));
 		if (options.get(Common.LENGTH) != null)
@@ -368,7 +391,7 @@ public class Keyboard extends ModuleImpl {
 			optimization = true;
 
 		tempName = Utils.getOutputFile();
-
+		System.out.println(tempName);
 		try {
 
 			writer = new PrintWriter(tempName, "UTF-8");
@@ -378,9 +401,9 @@ public class Keyboard extends ModuleImpl {
 			Logger.error(e.getMessage());
 		}
 
-		init(type, parts);
+		buildParts(type, parts);
 
-		length = length - 1;// Human readable
+		length = length - 1;
 		passwords = new HashSet<Part>();
 		for (String tmp : merged) {
 			passwords.add(new Part(tmp));
@@ -388,6 +411,7 @@ public class Keyboard extends ModuleImpl {
 		merged.clear();
 		System.out.println(Double.valueOf(
 				Math.pow(passwords.size(), length + 1)).intValue());
+
 		generate(passwords, new Part(), length);
 		runExternal();
 		writer.close();

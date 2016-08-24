@@ -53,8 +53,7 @@ public class Utils {
 	public static String cleanStringDuplicateChars(String str) {
 
 		String ret = "";
-		;
-		System.out.println(str);
+
 		Boolean exist = false;
 		for (int i = 0; i < str.length(); i++) {
 
@@ -71,7 +70,6 @@ public class Utils {
 			}
 
 		}
-		System.out.println(ret.toString());
 		return ret.toString();
 
 	}
