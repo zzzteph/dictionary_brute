@@ -26,69 +26,21 @@ public class Keyboard extends ModuleImpl {
 
 	HashSet<String> merged;
 	HashSet<Part> passwords;
-	final int max_size = 10000000;
+
 	PrintWriter writer;
-	String temp_name = "temp_brute_file";
+	String tempName = "temp_brute_file";
 	int size = 0;
 
-	String exec_path = "";
-	Boolean runExternal = false;
-	Boolean debug = false;
 	Boolean policy = false;
 	Boolean reverse = false;
 	Boolean optimization = false;
 
-	Integer count = 0;
 	static Map<String, HashSet<String>> links = new HashMap<String, HashSet<String>>();
 	List<String> ret = new ArrayList<String>();
 
 	char shift(char c) {
-		switch (c) {
-		case '1':
-			return '!';
-		case '2':
-			return '@';
-		case '3':
-			return '#';
-		case '4':
-			return '$';
-		case '5':
-			return '%';
-		case '6':
-			return '^';
-		case '7':
-			return '&';
-		case '8':
-			return '*';
-		case '9':
-			return '(';
-		case '0':
-			return ')';
-		case '-':
-			return '_';
-		case '=':
-			return '+';
-		case '\\':
-			return '|';
-		case '`':
-			return '~';
-		case '[':
-			return '{';
-		case ']':
-			return '}';
-		case ';':
-			return ':';
-		case '\'':
-			return '"';
-		case ',':
-			return '<';
-		case '.':
-			return '>';
-		case '/':
-			return '?';
-		default:
-			return Character.toUpperCase(c);
-		}
+
+		return 'c';
 
 	}
 
@@ -132,9 +84,8 @@ public class Keyboard extends ModuleImpl {
 	}
 
 	void add(String key, String value) {
-		value = value + value.toUpperCase();
-		String tmp;
 
+		String tmp;
 		for (int i = 0; i < value.length(); i++) {
 			tmp = value.substring(i, i + 1);
 			if (!links.containsKey(key))
@@ -201,22 +152,22 @@ public class Keyboard extends ModuleImpl {
 
 	void runExternal() {
 
-		this.options.put(Common.TAIL, temp_name);
+		this.options.put(Common.TAIL, tempName);
 		for (String tmp : super.run()) {
 			ret.add(tmp);
 		}
 	}
 
 	void makeDictionary(String temp) {
-		if (size > max_size) {
+		if (size > 10000000) {
 
 			writer.close();
 
 			runExternal();
 			size = 0;
-			Utils.deleteFile(temp_name);
+			Utils.deleteFile(tempName);
 			try {
-				writer = new PrintWriter(temp_name, "UTF-8");
+				writer = new PrintWriter(tempName, "UTF-8");
 			} catch (FileNotFoundException e) {
 				Logger.error(e.getMessage());
 			} catch (UnsupportedEncodingException e) {
@@ -232,7 +183,7 @@ public class Keyboard extends ModuleImpl {
 
 		runExternal();
 
-		(new File(temp_name)).delete();
+		(new File(tempName)).delete();
 
 	}
 
@@ -342,10 +293,57 @@ public class Keyboard extends ModuleImpl {
 			upper.add(part);
 		}
 
-		for (String part : upper) {
-			System.out.println(part);
+		// building chains lowercase
+
+		for (int i = 0; i < lowerCase.get(0).length(); i++) {
+			for (int j = 0; j < lowerCase.size(); j++) {
+				if (lowerCase.get(j).charAt(i) != ' ') {
+
+					StringBuffer temp = new StringBuffer();
+					temp.append(buildLinks(lowerCase, i, j));
+					temp.append(buildLinks(upperCase, i, j));
+					temp.append(buildLinks(capslockCase, i, j));
+
+					add(String.valueOf(lowerCase.get(j).charAt(i)),
+							Utils.cleanStringDuplicateChars(temp.toString()));
+				}
+			}
 		}
+
 		System.exit(0);
+	}
+
+	private String buildLinks(List<String> keyBoard, int i, int j) {
+		StringBuffer ret = new StringBuffer();
+		if (j - 1 >= 0)
+			if (i - 1 >= 0)
+				ret.append(keyBoard.get(j - 1).charAt(i - 1));
+		if (i - 1 >= 0)
+			ret.append(keyBoard.get(j).charAt(i - 1));
+
+		if (j + 1 < keyBoard.size())
+			if (i - 1 >= 0)
+				ret.append(keyBoard.get(j + 1).charAt(i - 1));
+
+		if (j - 1 >= 0)
+			ret.append(keyBoard.get(j - 1).charAt(i));
+
+		ret.append(keyBoard.get(j).charAt(i));
+
+		if (j + 1 < keyBoard.size())
+			ret.append(keyBoard.get(j + 1).charAt(i));
+
+		if (j - 1 >= 0)
+			if (i + 1 <= keyBoard.get(0).length())
+				ret.append(keyBoard.get(j - 1).charAt(i + 1));
+		if (i + 1 < keyBoard.get(0).length())
+			ret.append(keyBoard.get(j).charAt(i + 1));
+
+		if (j + 1 < keyBoard.size())
+			if (i + 1 < keyBoard.get(0).length())
+				ret.append(keyBoard.get(j + 1).charAt(i + 1));
+
+		return ret.toString().replace(" ", "");
 	}
 
 	public List<String> run() {
@@ -372,11 +370,11 @@ public class Keyboard extends ModuleImpl {
 		if (Boolean.parseBoolean(options.get(Common.OPTIMIZATION)))
 			optimization = true;
 
-		temp_name = Utils.getOutputFile();
+		tempName = Utils.getOutputFile();
 
 		try {
 
-			writer = new PrintWriter(temp_name, "UTF-8");
+			writer = new PrintWriter(tempName, "UTF-8");
 		} catch (FileNotFoundException e) {
 			Logger.error(e.getMessage());
 		} catch (UnsupportedEncodingException e) {
@@ -396,84 +394,9 @@ public class Keyboard extends ModuleImpl {
 		generate(passwords, new Part(), length);
 		runExternal();
 		writer.close();
-		Utils.deleteFile(temp_name);
+		Utils.deleteFile(tempName);
 
 		return ret;
-	}
-
-	private void init_qwerty() {
-
-		add("`", "`~1!");
-		add("~", "`~1!");
-		add("0", "_-po90");
-		add("1", "12q!@Q");
-		add("2", "123wq!@#WQ");
-		add("3", "34ew2@#$EW");
-		add("4", "345re#$%RE");
-		add("5", "56tr4%^TR$");
-		add("6", "67yt5%^&YT");
-		add("7", "78uy6&*UY^");
-		add("8", "89iu7*(IU&");
-		add("9", "90oi8()OI*");
-		add("0", "0-po9)_PO(");
-		add("-", "-=[p0_+{P)");
-		add("=", "=][-+}{_");
-		add(")", "_-po90");
-		add("!", "12q!@Q");
-		add("@", "123wq!@#WQ");
-		add("#", "34ew2@#$EW");
-		add("$", "345re#$%RE");
-		add("%", "56tr4%^TR$");
-		add("^", "67yt5%^&YT");
-		add("&", "78uy6&*UY^");
-		add("*", "89iu7*(IU&");
-		add("(", "90oi8()OI*");
-		add(")", "0-po9)_PO(");
-		add("_", "-=[p0_+{P)");
-		add("+", "=][-+}{_");
-		add("q", "12waq!@WAQ");
-		add("w", "23esaqw@#ESAQW");
-		add("e", "34rdswe#$RDSWE");
-		add("r", "45tfder$%TFDER");
-		add("t", "56ygfrt%^YGFRT");
-		add("y", "67uhgty^&UHGTY");
-		add("u", "78ijhyu&*IJHYU");
-		add("i", "89okjui*(OKJUI");
-		add("o", "90plkio()PLKIO");
-		add("p", "0-[;lop)_{:LOP");
-		add("[", "-=]';p[_+}\":P{");
-		add("]", "=[']+{\"}");
-		add("a", "aAqwszQWSZ");
-		add("s", "wedxzasWEDXZAS");
-		add("d", "erfcxsdERFCXSD");
-		add("f", "rtgvcdfRTGVCDF");
-		add("g", "tyhbvfgTYHBVFG");
-		add("h", "yujnbghYUJNBGH");
-		add("j", "uikmnhjUIKMNHJ");
-		add("k", "iol,mjkIOL<MJK");
-		add("l", "op;.,klOP:><KL");
-		add(";", "p['/.l;P{\"?>L:");
-		add("'", "][;/'}{:?\"");
-		add("z", "asxzASXZ");
-		add("x", "zsdcxZSDCX");
-		add("c", "xdfvcXDFVC");
-		add("v", "cfgbvCFGBV");
-		add("b", "vghnbVGHNB");
-		add("n", "bhjmnBHJMN");
-		add("m", "njk,mNJK<M");
-		add(",", "mkl.,MKL><");
-		add(".", ",l;/.<L:?>");
-		add("/", "';./\":>?");
-		add("{", "-=]';p[_+}\":P{");
-		add("}", "=[']+{\"}");
-		add("<", "mkl.,MKL><");
-		add(">", ",l;/.<L:?>");
-		add("?", "';./\":>?");
-		add(":", "p['/.l;P{\"?>L:");
-		add("\"", "][;/'}{:?\"");
-		// line = line_init;
-		// upper = upper_init;
-
 	}
 
 }

@@ -50,6 +50,32 @@ public class Utils {
 		}
 	}
 
+	public static String cleanStringDuplicateChars(String str) {
+
+		String ret = "";
+		;
+		System.out.println(str);
+		Boolean exist = false;
+		for (int i = 0; i < str.length(); i++) {
+
+			for (int j = 0; j < ret.length(); j++) {
+
+				if (ret.charAt(j) == str.charAt(i)) {
+					exist = true;
+					break;
+				}
+
+			}
+			if (exist == false) {
+				ret = ret + str.charAt(i);
+			}
+
+		}
+		System.out.println(ret.toString());
+		return ret.toString();
+
+	}
+
 	public static void rebuildInputFile(List<String> results, String InputFile) {
 
 		List<String> file = readFileUniq(InputFile);
