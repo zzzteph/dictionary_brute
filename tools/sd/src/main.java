@@ -3,7 +3,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 import common.Logger;
@@ -19,13 +19,13 @@ public class main {
 
 	static void loadConfig(String configPath) {
 		CommandLine global = CommandLine.getInstance();
-		
-		File config = new File(configPath,"config.txt");
+
+		File config = new File(configPath, "config.txt");
 
 		BufferedReader br;
 		try {
 			br = new BufferedReader(new FileReader(config.getAbsolutePath()));
-			
+
 			String line;
 			while ((line = br.readLine()) != null) {
 
@@ -49,19 +49,42 @@ public class main {
 	}
 
 	public static void main(String[] args) {
-
+		List<String> hashFile = new ArrayList<String>();
+		List<String> result = new ArrayList<String>();
+		boolean founded = false;
 		CommandLine global = CommandLine.getInstance();
 		String inputFile = null;
+
+		hashFile.add("2500");// WPA/WPA2
+		hashFile.add("5200");// Password Safe v3
+		hashFile.add("5300");// IKE-PSK MD5
+		hashFile.add("5400");// IKE-PSK SHA1
+		hashFile.add("6600");// 1Password, Agile Keychain
+		hashFile.add("8200");// 1Password, Cloud Keychain
+		hashFile.add("8800");// Android FDE <= 4.3
+		hashFile.add("9000");// Password Safe v2
+		hashFile.add("6211");// TrueCrypt 5.0+
+		hashFile.add("6212");// TrueCrypt 5.0+
+		hashFile.add("6213");// TrueCrypt 5.0+
+		hashFile.add("6221");// TrueCrypt 5.0+
+		hashFile.add("6222");// TrueCrypt 5.0+
+		hashFile.add("6223");// TrueCrypt 5.0+
+		hashFile.add("6231");// TrueCrypt 5.0+
+		hashFile.add("6232");// TrueCrypt 5.0+
+		hashFile.add("6233");// TrueCrypt 5.0+
+		hashFile.add("6241");// TrueCrypt 5.0+
+		hashFile.add("6242");// TrueCrypt 5.0+
+		hashFile.add("6243");// TrueCrypt 5.0+
+
 		for (int i = 0; i < args.length; i++) {
-			
-			if (("-c").equals(args[i]) ||("--config").equals(args[i])) {
-			
+
+			if (("-c").equals(args[i]) || ("--config").equals(args[i])) {
+
 				if (i + 1 <= args.length) {
 					global.add(Common.CONFIG, args[i + 1]);
 					i++;
 				}
-			}
-			else if (("-m").equals(args[i]) || ("--module").equals(args[i])) {
+			} else if (("-m").equals(args[i]) || ("--module").equals(args[i])) {
 				if (i + 1 <= args.length) {
 					global.add(Common.MODULE, args[i + 1]);
 					i++;
@@ -74,7 +97,7 @@ public class main {
 			}
 
 			else {
-				System.out.println("INPUT FILE:"+args[i]);
+				System.out.println("INPUT FILE:" + args[i]);
 				inputFile = args[i];
 
 			}
@@ -87,11 +110,30 @@ public class main {
 		Parser parser = Parser.getInstance();
 
 		for (Options ModuleStage : parser.parse("test.xml")) {
-			List<String> result = Runner.getInstance().runModule(ModuleStage);
+
+			for (String cracked : Runner.getInstance().runModule(ModuleStage)) {
+				if (!result.contains(cracked))
+					result.add(cracked);
+			}
+
+			// check if only one hash per file
+			for (String oneSample : hashFile) {
+				if (global.getOption(Common.MODULE).equalsIgnoreCase(oneSample)) {
+					if (result.size() > 0)// if founded for files with only one
+											// hash then end
+						founded = true;
+				}
+			}
+			if (founded)
+				break;
+
 			// if(!global.getOption(Strings.MODULE).equalsIgnoreCase("2500"))
 			Utils.rebuildInputFile(result,
 					CommandLine.getInstance().getOption(Common.INPUT));
+		}
 
+		for (String tmp : result) {
+			System.out.println(tmp);
 		}
 
 		Utils.deleteFile(global.getOption(Common.INPUT));

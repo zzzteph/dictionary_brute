@@ -1,41 +1,16 @@
 <root>
-
 	<module class="keyboard">
-	<KEYBOARD>qwerty</KEYBOARD>
-	<type>line</type>
-	</module>
-	<module class="keyboard">
-	<KEYBOARD>qwerty</KEYBOARD>
-	<type>line</type>
-	<length>2</length>
-	<optimization>true</optimization>
-	<parts>4</parts>
+		<keyboard>qwerty</keyboard>
+		<type>line</type>
 	</module>
 	<module class="keyboard">
-	<KEYBOARD>qwerty</KEYBOARD>
-	<type>mixed</type>
-	<parts>4</parts>
-	</module>	
-		<module class="keyboard">
-	<KEYBOARD>qwerty</KEYBOARD>
-	<type>mixed</type>
-	<parts>3</parts>
+		<keyboard>qwerty</keyboard>
+		<type>mixed</type>
+		<length>3</length>
+		<optimization>true</optimization>
+		<parts>3</parts>
 	</module>
-	
-	<module class="suggest">
-	</module>
-
-	<module class="mask">
-        <mask>?u?l?l?l?d?d?d?d</mask>
-    </module>
-
-
 	<module class="dictionary">
         <dictionary>/home/steph/pentest/dictionaries/hashesorg</dictionary>
     </module>
-  
-    
-
-
-
 </root>

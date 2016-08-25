@@ -81,7 +81,7 @@ public class Utils {
 			int i = 0;
 			for (String uncrackedPasswords : file) {
 				if (crackedPasswords.contains(uncrackedPasswords)) {
-					System.out.println(crackedPasswords);
+					// System.out.println(crackedPasswords);
 					file.remove(i);
 					break;
 				}
@@ -192,6 +192,23 @@ public class Utils {
 			e.printStackTrace();
 		}
 		return ret;
+	}
+
+	public String MD5(String md5) {
+		try {
+			java.security.MessageDigest md = java.security.MessageDigest
+					.getInstance("MD5");
+			byte[] array = md.digest(md5.getBytes());
+			StringBuffer sb = new StringBuffer();
+			for (int i = 0; i < array.length; ++i) {
+				sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100)
+						.substring(1, 3));
+			}
+			return sb.toString();
+		} catch (java.security.NoSuchAlgorithmException e) {
+			Logger.error(e.getMessage());
+		}
+		return null;
 	}
 
 	public static DocumentBuilder getDocumentBuilder() {
