@@ -11,6 +11,7 @@ public interface Common {
 	public static final String INPUT = "INPUT";
 	public static final String OUTPUT = "OUTPUT";
 	public static final String TAIL = "TAIL";
+	public static final String PROJECT = "PROJECT";
 
 	// dictionary
 	public static final String DICTIONARY = "DICTIONARY";

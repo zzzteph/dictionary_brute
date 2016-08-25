@@ -3,13 +3,6 @@
 		<keyboard>qwerty</keyboard>
 		<type>line</type>
 	</module>
-	<module class="keyboard">
-		<keyboard>qwerty</keyboard>
-		<type>mixed</type>
-		<length>3</length>
-		<optimization>true</optimization>
-		<parts>3</parts>
-	</module>
 	<module class="dictionary">
         <dictionary>/home/steph/pentest/dictionaries/hashesorg</dictionary>
     </module>

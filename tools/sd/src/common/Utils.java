@@ -50,6 +50,18 @@ public class Utils {
 		}
 	}
 
+	public static boolean createFolder(String folderPath, String folderName) {
+		File file = new File(folderPath, folderName);
+		if (!file.exists()) {
+			if (file.mkdir()) {
+				return true;
+			}
+		} else {
+			return true;
+		}
+		return false;
+	}
+
 	public static String cleanStringDuplicateChars(String str) {
 
 		String ret = "";

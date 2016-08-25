@@ -1,8 +1,11 @@
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,7 +57,7 @@ public class main {
 		boolean founded = false;
 		CommandLine global = CommandLine.getInstance();
 		String inputFile = null;
-
+		PrintWriter out = null;
 		hashFile.add("2500");// WPA/WPA2
 		hashFile.add("5200");// Password Safe v3
 		hashFile.add("5300");// IKE-PSK MD5
@@ -84,7 +87,17 @@ public class main {
 					global.add(Common.CONFIG, args[i + 1]);
 					i++;
 				}
-			} else if (("-m").equals(args[i]) || ("--module").equals(args[i])) {
+			}
+
+			else if (("-o").equals(args[i]) || ("--output").equals(args[i])) {
+
+				if (i + 1 <= args.length) {
+					global.add(Common.PROJECT, args[i + 1]);
+					i++;
+				}
+			}
+
+			else if (("-m").equals(args[i]) || ("--module").equals(args[i])) {
 				if (i + 1 <= args.length) {
 					global.add(Common.MODULE, args[i + 1]);
 					i++;
@@ -109,12 +122,43 @@ public class main {
 		Utils.cloneFile(inputFile, global.getOption(Common.INPUT));
 		Parser parser = Parser.getInstance();
 
+		// create output folder
+		if (global.getOption(Common.PROJECT) == null) {
+
+			global.add(Common.PROJECT, new File(inputFile).getName()
+					+ "_output");
+		}
+		if (Utils.createFolder(global.getOption(Common.OUTPUT),
+				global.getOption(Common.PROJECT)) == false)
+			Logger.error("Can't create output folder:"
+					+ global.getOption(Common.PROJECT));
+		// copy input file
+
+		File projectFolder = new File(global.getOption(Common.OUTPUT),
+				global.getOption(Common.PROJECT));
+		File projectFile = new File(projectFolder,
+				new File(inputFile).getName());
+		File outputFile = new File(projectFolder, "output.txt");
+		Utils.cloneFile(inputFile, projectFile.getAbsolutePath());
+
 		for (Options ModuleStage : parser.parse("test.xml")) {
+			try {
+				out = new PrintWriter(new BufferedWriter(new FileWriter(
+						outputFile.getAbsolutePath(), true)));
+			} catch (IOException e) {
+				Logger.error(e.getMessage());
+			}
 
 			for (String cracked : Runner.getInstance().runModule(ModuleStage)) {
-				if (!result.contains(cracked))
+				if (!result.contains(cracked)) {
 					result.add(cracked);
+					out.println(cracked);
+				}
 			}
+
+			out.close();
+
+			// append to outputfile
 
 			// check if only one hash per file
 			for (String oneSample : hashFile) {
