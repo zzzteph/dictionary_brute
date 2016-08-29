@@ -12,6 +12,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -93,7 +94,7 @@ public class Utils {
 			int i = 0;
 			for (String uncrackedPasswords : file) {
 				if (crackedPasswords.contains(uncrackedPasswords)) {
-					// System.out.println(crackedPasswords);
+					System.out.println(crackedPasswords);
 					file.remove(i);
 					break;
 				}
@@ -106,21 +107,25 @@ public class Utils {
 	}
 
 	public static List<String> readFileUniq(String file) {
-		List<String> ret = new ArrayList<String>();
+		HashSet<String> temp = new HashSet<String>();
 		BufferedReader br = null;
 		try {
 			br = new BufferedReader(new FileReader(file));
 			String line;
 			while ((line = br.readLine()) != null) {
-
-				if (!ret.contains(line))
-					ret.add(line);
+				if (!temp.contains(line))
+					temp.add(line);
 			}
 			br.close();
 		} catch (FileNotFoundException ex) {
 			System.out.println(ex.getMessage());
 		} catch (IOException ex) {
 			System.out.println(ex.getMessage());
+		}
+
+		List<String> ret = new ArrayList<String>();
+		for (String tmp : temp) {
+			ret.add(tmp);
 		}
 
 		return ret;

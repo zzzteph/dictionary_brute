@@ -3,6 +3,14 @@
 		<keyboard>qwerty</keyboard>
 		<type>line</type>
 	</module>
+	<module class="keyboard">
+		<keyboard>qwerty</keyboard>
+		<type>upper</type>
+		<SEGMENT_LENGTH>4</SEGMENT_LENGTH>
+		<SEGMENTS_COUNT>3</SEGMENTS_COUNT>
+	</module>
+
+
 	<module class="dictionary">
         <dictionary>/home/steph/pentest/dictionaries/hashesorg</dictionary>
     </module>

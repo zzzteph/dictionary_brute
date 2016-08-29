@@ -21,8 +21,10 @@ import core.beans.Strings.Common;
 public class main {
 
 	static void loadConfig(String configPath) {
-		CommandLine global = CommandLine.getInstance();
 
+		CommandLine global = CommandLine.getInstance();
+		if (configPath == null)
+			configPath = "config";
 		File config = new File(configPath, "config.txt");
 
 		BufferedReader br;
@@ -117,6 +119,7 @@ public class main {
 		}
 
 		loadConfig(global.getOption(Common.CONFIG));
+
 		global.add(Common.INPUT, Utils.getInputFile());
 		// make input duplication and copy it
 		Utils.cloneFile(inputFile, global.getOption(Common.INPUT));
@@ -155,27 +158,25 @@ public class main {
 					out.println(cracked);
 				}
 			}
-
 			out.close();
-
 			// append to outputfile
-
 			// check if only one hash per file
 			for (String oneSample : hashFile) {
 				if (global.getOption(Common.MODULE).equalsIgnoreCase(oneSample)) {
 					if (result.size() > 0)// if founded for files with only one
-											// hash then end
 						founded = true;
 				}
 			}
 			if (founded)
 				break;
 
-			// if(!global.getOption(Strings.MODULE).equalsIgnoreCase("2500"))
-			Utils.rebuildInputFile(result,
-					CommandLine.getInstance().getOption(Common.INPUT));
-		}
+			// oneline hashes cant be rebuild
 
+			if (!hashFile.contains(global.getOption(Common.MODULE)))
+				Utils.rebuildInputFile(result, CommandLine.getInstance()
+						.getOption(Common.INPUT));
+
+		}
 		for (String tmp : result) {
 			System.out.println(tmp);
 		}

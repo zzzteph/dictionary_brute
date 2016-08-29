@@ -18,8 +18,8 @@ public interface Common {
 
 	// Keyboard
 	public static final String TYPE = "TYPE";
-	public static final String PARTS = "PARTS";
-	public static final String LENGTH = "LENGTH";
+	public static final String SEGMENT_LENGTH = "SEGMENT_LENGTH";
+	public static final String SEGMENTS_COUNT = "SEGMENTS_COUNT";
 	public static final String MAX_PARTS = "MAX_PARTS";
 	public static final String POLICY = "POLICY";
 	public static final String REVERSE = "REVERSE";

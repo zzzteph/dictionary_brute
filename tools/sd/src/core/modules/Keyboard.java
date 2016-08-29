@@ -380,10 +380,10 @@ public class Keyboard extends ModuleImpl {
 
 		if (options.get(Common.TYPE) != null)
 			type = options.get(Common.TYPE);
-		if (options.get(Common.PARTS) != null)
-			parts = Integer.parseInt(options.get(Common.PARTS));
-		if (options.get(Common.LENGTH) != null)
-			length = Integer.parseInt(options.get(Common.LENGTH));
+		if (options.get(Common.SEGMENT_LENGTH) != null)
+			parts = Integer.parseInt(options.get(Common.SEGMENT_LENGTH));
+		if (options.get(Common.SEGMENTS_COUNT) != null)
+			length = Integer.parseInt(options.get(Common.SEGMENTS_COUNT));
 
 		if (Boolean.parseBoolean(options.get(Common.POLICY)))
 			policy = true;
