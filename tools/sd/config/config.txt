@@ -1,9 +1,8 @@
-#EXEC=/home/steph/hashcat/hashcat-cli64.bin
-#MAINDIR=/home/steph/dictionary_brute/
-#OUTPUT=/home/steph/dictionary_brute/output
+EXEC=/home/steph/hashcat/hashcat-cli64.bin
+MAINDIR=/home/steph/dictionary_brute/
+OUTPUT=/home/steph/dictionary_brute/output
 
 
-
-EXEC=D:\hashcat\hashcat-cli64.exe
-MAINDIR=D:\dictionary_brute
-OUTPUT=D:\dictionary_brute\output
+#EXEC=D:\hashcat\hashcat-cli64.exe
+#MAINDIR=D:\dictionary_brute
+#OUTPUT=D:\dictionary_brute\output

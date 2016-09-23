@@ -1,0 +1,91 @@
+<root>
+	
+	<module class="dictionary">
+		<dictionary>$MAINDIR/dictionary.dic</dictionary>
+		<description>Simple dictionary bruteforce</description>
+	</module>
+	<module class="keyboard">
+		<keyboard>qwerty</keyboard>
+		<type>line</type>
+		<SEGMENT_LENGTH>3</SEGMENT_LENGTH>
+		<SEGMENTS_COUNT>3</SEGMENTS_COUNT>
+		<OPTIMIZATION>true</OPTIMIZATION>
+		<POLICY>true</POLICY>
+		<description>Bruteforce keyboard combinations like 123qweasd, 123QweAsd.Segment length:3 and total password length 9. Using optimization. Windows passwords policy used</description>
+	</module>
+	<module class="keyboard">
+		<keyboard>qwerty</keyboard>
+		<type>upper</type>
+			<SEGMENT_LENGTH>4</SEGMENT_LENGTH>
+			<SEGMENTS_COUNT>3</SEGMENTS_COUNT>
+			<OPTIMIZATION>true</OPTIMIZATION>
+			<POLICY>true</POLICY>
+		<description>Bruteforce keyboard combinations like 1qaz2wsx3edc.Segment length:4 and total password length 12. Using optimization. Windows passwords policy used</description>
+	</module>
+		<module class="keyboard">
+		<keyboard>qwerty</keyboard>
+		<type>upper</type>
+		<SEGMENT_LENGTH>4</SEGMENT_LENGTH>
+		<SEGMENTS_COUNT>4</SEGMENTS_COUNT>
+		<OPTIMIZATION>true</OPTIMIZATION>
+		<POLICY>true</POLICY>
+		<description>Bruteforce keyboard combinations like 1qaz2wsx3edc.Segment length:4 and total password length 16. Using optimization. Windows passwords policy used</description>
+	</module>
+	<!-- Seasons block -->
+	<module class="dictionary">
+		<dictionary>$MAINDIR/seasons/seasons.txt</dictionary>
+		<rules>$MAINDIR/rules/rcap/Word_year.rule</rules>
+		<description>Simple dictionary bruteforce</description>
+	</module>
+		<module class="dictionary">
+		<dictionary>$MAINDIR/seasons/seasons.txt</dictionary>
+		<rules>$MAINDIR/rules/rcap/Word_pd.rule</rules>
+		<description>Simple dictionary bruteforce</description>
+	</module>
+	<module class="dictionary">
+		<dictionary>$MAINDIR/seasons/seasons.txt</dictionary>
+		<rules>$MAINDIR/rules/rcap/Word_day_mon.rule</rules>
+		<description>Simple dictionary bruteforce</description>
+	</module>
+	<module class="dictionary">
+		<dictionary>$MAINDIR/seasons/seasons.txt</dictionary>
+		<rules>$MAINDIR/rules/rcap/Word_dddd.rule</rules>
+		<description>Simple dictionary bruteforce</description>
+	</module>
+	
+	<!-- Seasons rus block -->
+		<module class="dictionary">
+		<dictionary>$MAINDIR/seasons/seasons_ru.txt</dictionary>
+		<rules>$MAINDIR/rules/rcap/Word_pd.rule</rules>
+		<description>Simple dictionary bruteforce</description>
+	</module>
+		<module class="dictionary">
+		<dictionary>$MAINDIR/seasons/seasons_ru.txt</dictionary>
+		<rules>$MAINDIR/rules/rcap/Word_year.rule</rules>
+		<description>Simple dictionary bruteforce</description>
+	</module>
+	<module class="dictionary">
+		<dictionary>$MAINDIR/seasons/seasons_ru.txt</dictionary>
+		<rules>$MAINDIR/rules/rcap/year_Word.rule</rules>
+		<description>Simple dictionary bruteforce</description>
+	</module>
+	
+	<module class="dictionary">
+		<dictionary>$MAINDIR/seasons/seasons_ru.txt</dictionary>
+		<rules>$MAINDIR/rules/rcap/Word_day_mon.rule</rules>
+		<description>Simple dictionary bruteforce</description>
+	</module>
+	
+	<module class="dictionary">
+		<dictionary>$MAINDIR/seasons/seasons_ru.txt</dictionary>
+		<rules>$MAINDIR/rules/lower/word_sc_year.rule</rules>
+		<description>Simple dictionary bruteforce</description>
+	</module>
+	
+	<module class="dictionary">
+		<dictionary>$MAINDIR/seasons/seasons_ru.txt</dictionary>
+		<rules>$MAINDIR/rules/rcap/Word_dddd.rule</rules>
+		<description>Simple dictionary bruteforce</description>
+	</module>
+	
+</root>

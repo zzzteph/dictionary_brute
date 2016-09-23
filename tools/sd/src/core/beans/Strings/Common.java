@@ -12,6 +12,7 @@ public interface Common {
 	public static final String OUTPUT = "OUTPUT";
 	public static final String TAIL = "TAIL";
 	public static final String PROJECT = "PROJECT";
+	public static final String EXEC_STAGE = "EXEC_STAGE";
 
 	// dictionary
 	public static final String DICTIONARY = "DICTIONARY";
