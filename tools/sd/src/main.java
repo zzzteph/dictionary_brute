@@ -35,7 +35,7 @@ public class main {
 			while ((line = br.readLine()) != null) {
 
 				String[] tmp = line.split("=", 2);
-				if (tmp.length == 2) {
+				if (tmp.length == 2 && !tmp[0].startsWith("#")) {
 					tmp[0] = tmp[0].toUpperCase();
 					global.add(tmp[0], tmp[1]);
 

@@ -172,9 +172,15 @@ public class Utils {
 	}
 
 	public static String getOutputFile() {
-
+		
 		File outFile = new File(System.getProperty("java.io.tmpdir"),
 				getRandomString());
+		try {
+			outFile.createNewFile();
+		} catch (IOException e) {
+			//TODO: разрулить эксепшн 
+			e.printStackTrace();
+		}
 		return outFile.getAbsolutePath();
 	}
 
