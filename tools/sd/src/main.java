@@ -150,46 +150,45 @@ public class main {
 		File outputFile = new File(projectFolder, "output.txt");
 		Utils.cloneFile(inputFile, projectFile.getAbsolutePath());
 
-		session.startSession(global);
-		
-		for (Options ModuleStage : parser.parse("test.xml")) {
-			try {
-				out = new PrintWriter(new BufferedWriter(new FileWriter(
-						outputFile.getAbsolutePath(), true)));
-			} catch (IOException e) {
-				Logger.error(e.getMessage());
-			}
-
-			for (String cracked : Runner.getInstance().runModule(ModuleStage)) {
-				if (!result.contains(cracked)) {
-					result.add(cracked);
-					out.println(cracked);
+		if(session.startSession(global.getOptions())) {
+			for (Options ModuleStage : parser.parse("test.xml")) {
+				try {
+					out = new PrintWriter(new BufferedWriter(new FileWriter(
+							outputFile.getAbsolutePath(), true)));
+				} catch (IOException e) {
+					Logger.error(e.getMessage());
 				}
-			}
-			out.close();
-			// append to outputfile
-			// check if only one hash per file
-			for (String oneSample : hashFile) {
-				if (global.getOption(Common.MODULE).equalsIgnoreCase(oneSample)) {
-					if (result.size() > 0)// if founded for files with only one
-						founded = true;
+	
+				for (String cracked : Runner.getInstance().runModule(ModuleStage)) {
+					if (!result.contains(cracked)) {
+						result.add(cracked);
+						out.println(cracked);
+					}
 				}
+				out.close();
+				// append to outputfile
+				// check if only one hash per file
+				for (String oneSample : hashFile) {
+					if (global.getOption(Common.MODULE).equalsIgnoreCase(oneSample)) {
+						if (result.size() > 0)// if founded for files with only one
+							founded = true;
+					}
+				}
+				if (founded)
+					break;
+	
+				// oneline hashes cant be rebuild
+	
+				if (!hashFile.contains(global.getOption(Common.MODULE)))
+					Utils.rebuildInputFile(result, CommandLine.getInstance()
+							.getOption(Common.INPUT));
+	
 			}
-			if (founded)
-				break;
-
-			// oneline hashes cant be rebuild
-
-			if (!hashFile.contains(global.getOption(Common.MODULE)))
-				Utils.rebuildInputFile(result, CommandLine.getInstance()
-						.getOption(Common.INPUT));
-
+			for (String tmp : result) {
+				System.out.println(tmp);
+			}
+			session.finishSession();
 		}
-		for (String tmp : result) {
-			System.out.println(tmp);
-		}
-		
-		session.finishSession();
 		Utils.deleteFile(global.getOption(Common.INPUT));
 	}
 }

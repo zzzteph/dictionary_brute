@@ -9,7 +9,7 @@ import java.util.Map;
 
 import common.Logger;
 import common.Utils;
-
+import core.beans.SessionHandler;
 import core.beans.Strings.Common;
 import core.interfaces.IModule;
 
@@ -19,6 +19,7 @@ public abstract class ModuleImpl implements IModule {
 	public List<String> tail = new ArrayList<String>();
 	protected Process process = null;
 	protected Map<String, String> options = new HashMap<String, String>();
+	protected SessionHandler session = SessionHandler.getInstance();
 
 	public void setValue(String key, String value) {
 		this.options.put(key, value);
@@ -52,7 +53,7 @@ public abstract class ModuleImpl implements IModule {
 			cmd.add(addOptions);
 		}
 		System.out.println("Command" + cmd.toString());
-
+		session.addCommand(cmd);
 		
 		try {
  			command = new ProcessBuilder(cmd);
