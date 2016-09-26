@@ -16,6 +16,7 @@ import core.Parser;
 import core.Runner;
 import core.beans.CommandLine;
 import core.beans.Options;
+import core.beans.SessionHandler;
 import core.beans.Strings.Common;
 
 public class main {
@@ -56,6 +57,7 @@ public class main {
 	public static void main(String[] args) {
 		List<String> hashFile = new ArrayList<String>();
 		List<String> result = new ArrayList<String>();
+		SessionHandler session = SessionHandler.getInstance();
 		boolean founded = false;
 		CommandLine global = CommandLine.getInstance();
 		String inputFile = null;
@@ -81,6 +83,10 @@ public class main {
 		hashFile.add("6242");// TrueCrypt 5.0+
 		hashFile.add("6243");// TrueCrypt 5.0+
 
+		if(session.checkPreviousSession()) {
+			System.out.println("you have unfinished session");
+		}
+		
 		for (int i = 0; i < args.length; i++) {
 
 			if (("-c").equals(args[i]) || ("--config").equals(args[i])) {
@@ -144,6 +150,8 @@ public class main {
 		File outputFile = new File(projectFolder, "output.txt");
 		Utils.cloneFile(inputFile, projectFile.getAbsolutePath());
 
+		session.startSession(global);
+		
 		for (Options ModuleStage : parser.parse("test.xml")) {
 			try {
 				out = new PrintWriter(new BufferedWriter(new FileWriter(
@@ -180,7 +188,8 @@ public class main {
 		for (String tmp : result) {
 			System.out.println(tmp);
 		}
-
+		
+		session.finishSession();
 		Utils.deleteFile(global.getOption(Common.INPUT));
 	}
 }

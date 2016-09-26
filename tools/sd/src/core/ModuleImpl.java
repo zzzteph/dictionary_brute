@@ -55,16 +55,16 @@ public abstract class ModuleImpl implements IModule {
 
 		
 		try {
-			 			command = new ProcessBuilder(cmd);
-			 			process = command.start();
-			 			int exitVal = process.waitFor();
-			 			System.out.println("Process exited with value:" + exitVal);
-			 		} catch (IOException e) {
-			 
-			 			Logger.error(e.getMessage());
-			 		} catch (InterruptedException e) {
-			 			Logger.error(e.getMessage());
-			 		}
+ 			command = new ProcessBuilder(cmd);
+ 			process = command.start();
+ 			int exitVal = process.waitFor();
+ 			System.out.println("Process exited with value:" + exitVal);
+ 		} catch (IOException e) {
+ 
+ 			Logger.error(e.getMessage());
+ 		} catch (InterruptedException e) {
+ 			Logger.error(e.getMessage());
+ 		}
 
 		List<String> ret = Utils.readFileUniq(options.get(Common.OUTPUT));
 		Utils.deleteFile(options.get(Common.OUTPUT));
