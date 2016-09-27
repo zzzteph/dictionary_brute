@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.Console;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import common.Logger;
 import common.Utils;
@@ -83,52 +85,64 @@ public class main {
 		hashFile.add("6242");// TrueCrypt 5.0+
 		hashFile.add("6243");// TrueCrypt 5.0+
 
-		if(session.checkPreviousSession()) {
-			System.out.println("you have unfinished session");
+		Boolean runPrevSession = false;
+		Map<String, Object> prevSession = session.checkPreviousSession();
+		if(prevSession != null) {
+			Console console = System.console();
+			if (console != null) {
+				System.out.println("you have unfinished session, do you want to continue it ? (Y/n)");
+				String answer = console.readLine();
+				runPrevSession = answer.toLowerCase().equals("y");
+			}
 		}
 		
-		for (int i = 0; i < args.length; i++) {
+		if (runPrevSession) {
+			
+		} else {
+			for (int i = 0; i < args.length; i++) {
 
-			if (("-c").equals(args[i]) || ("--config").equals(args[i])) {
+				if (("-c").equals(args[i]) || ("--config").equals(args[i])) {
 
-				if (i + 1 <= args.length) {
-					global.add(Common.CONFIG, args[i + 1]);
-					i++;
+					if (i + 1 <= args.length) {
+						global.add(Common.CONFIG, args[i + 1]);
+						i++;
+					}
+				}
+
+				else if (("-o").equals(args[i]) || ("--output").equals(args[i])) {
+
+					if (i + 1 <= args.length) {
+						global.add(Common.PROJECT, args[i + 1]);
+						i++;
+					}
+				}
+
+				else if (("-m").equals(args[i]) || ("--module").equals(args[i])) {
+					if (i + 1 <= args.length) {
+						global.add(Common.MODULE, args[i + 1]);
+						i++;
+					}
+				} else if (("-s").equals(args[i]) || ("--suggest").equals(args[i])) {
+					if (i + 1 <= args.length) {
+						global.add(Common.SUGGEST, args[i + 1]);
+						i++;
+					}
+				}
+
+				else {
+					System.out.println("INPUT FILE:" + args[i]);
+					inputFile = args[i];
+
 				}
 			}
 
-			else if (("-o").equals(args[i]) || ("--output").equals(args[i])) {
-
-				if (i + 1 <= args.length) {
-					global.add(Common.PROJECT, args[i + 1]);
-					i++;
-				}
-			}
-
-			else if (("-m").equals(args[i]) || ("--module").equals(args[i])) {
-				if (i + 1 <= args.length) {
-					global.add(Common.MODULE, args[i + 1]);
-					i++;
-				}
-			} else if (("-s").equals(args[i]) || ("--suggest").equals(args[i])) {
-				if (i + 1 <= args.length) {
-					global.add(Common.SUGGEST, args[i + 1]);
-					i++;
-				}
-			}
-
-			else {
-				System.out.println("INPUT FILE:" + args[i]);
-				inputFile = args[i];
-
-			}
+			loadConfig(global.getOption(Common.CONFIG));	
+			global.add(Common.INPUT, Utils.getInputFile());
 		}
-
-		loadConfig(global.getOption(Common.CONFIG));
-
-		global.add(Common.INPUT, Utils.getInputFile());
+		
 		// make input duplication and copy it
 		Utils.cloneFile(inputFile, global.getOption(Common.INPUT));
+		
 		Parser parser = Parser.getInstance();
 
 		// create output folder
@@ -141,6 +155,7 @@ public class main {
 				global.getOption(Common.PROJECT)) == false)
 			Logger.error("Can't create output folder:"
 					+ global.getOption(Common.PROJECT));
+		
 		// copy input file
 
 		File projectFolder = new File(global.getOption(Common.OUTPUT),

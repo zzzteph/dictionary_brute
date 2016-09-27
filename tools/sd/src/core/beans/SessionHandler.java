@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -62,17 +63,23 @@ public class SessionHandler {
 		return result;
 	}
 	
-	public Boolean checkPreviousSession(){
+	public Map<String, Object> checkPreviousSession(){
 		try {
-			ResultSet rs = statement.executeQuery("SELECT * FROM 'session' WHERE `finished` == NULL");
-			while(rs.next()){
-				return true;
+			ResultSet rs = statement.executeQuery("SELECT * FROM `session` "
+					+ "WHERE `finished` IS NULL "
+					+ "ORDER BY `started` DESC "
+					+ "LIMIT 1");
+			if(rs.next()){
+				Map<String, Object> sessionObject = new HashMap<String, Object>();
+				sessionObject.put("id", rs.getInt(1));
+				sessionObject.put("cmd_options", rs.getInt(4));
+				sessionObject.put("options", rs.getInt(5));
+				return sessionObject;
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return false;
+		return null;
 	}
 	
 	public Boolean cleanOldSessions(){
@@ -104,6 +111,17 @@ public class SessionHandler {
 	public Boolean finishSession(){
 		try {
 			statement.executeUpdate("UPDATE 'session' set 'finished' = CURRENT_TIMESTAMP WHERE id = "+currentSession+"; ");
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public Boolean finishSession(Integer sessionId){
+		try {
+			statement.executeUpdate("UPDATE 'session' set 'finished' = CURRENT_TIMESTAMP WHERE id = "+sessionId+"; ");
 			return true;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

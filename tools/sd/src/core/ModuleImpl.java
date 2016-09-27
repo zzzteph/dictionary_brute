@@ -61,7 +61,6 @@ public abstract class ModuleImpl implements IModule {
  			int exitVal = process.waitFor();
  			System.out.println("Process exited with value:" + exitVal);
  		} catch (IOException e) {
- 
  			Logger.error(e.getMessage());
  		} catch (InterruptedException e) {
  			Logger.error(e.getMessage());
