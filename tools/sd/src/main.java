@@ -1,5 +1,6 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.Console;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -8,6 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import common.Logger;
 import common.Utils;
@@ -16,6 +18,7 @@ import core.Parser;
 import core.Runner;
 import core.beans.CommandLine;
 import core.beans.Options;
+import core.beans.SessionHandler;
 import core.beans.Strings.Common;
 
 public class main {
@@ -57,6 +60,7 @@ public class main {
 	public static void main(String[] args) {
 		List<String> hashFile = new ArrayList<String>();
 		List<String> result = new ArrayList<String>();
+		SessionHandler session = SessionHandler.getInstance();
 		boolean founded = false;
 		CommandLine global = CommandLine.getInstance();
 		String inputFile = null;
@@ -83,59 +87,76 @@ public class main {
 		hashFile.add("6242");// TrueCrypt 5.0+
 		hashFile.add("6243");// TrueCrypt 5.0+
 
-		for (int i = 0; i < args.length; i++) {
-
-			if (("-c").equals(args[i]) || ("--config").equals(args[i])) {
-
-				if (i + 1 <= args.length) {
-					global.add(Common.CONFIG, args[i + 1]);
-					i++;
-				}
-			}
-
-			else if (("-o").equals(args[i]) || ("--output").equals(args[i])) {
-
-				if (i + 1 <= args.length) {
-					global.add(Common.PROJECT, args[i + 1]);
-					i++;
-				}
-			} else if (("-m").equals(args[i]) || ("--module").equals(args[i])) {
-				if (i + 1 <= args.length) {
-					global.add(Common.MODULE, args[i + 1]);
-					i++;
-				}
-			} else if (("-s").equals(args[i]) || ("--suggest").equals(args[i])) {
-				if (i + 1 <= args.length) {
-					global.add(Common.SUGGEST, args[i + 1]);
-					i++;
-				}
-			}
-
-			else {
-
-				if (inputFile == null) {
-					System.out.println("INPUT FILE:" + args[i]);
-					inputFile = args[i];
-				} else {
-					System.out.println("EXEC MODULE:" + args[i]);
-					execModule = args[i];
-				}
+		Boolean runPrevSession = false;
+		Map<String, Object> prevSession = session.checkPreviousSession();
+		if(prevSession != null) {
+			Console console = System.console();
+			if (console != null) {
+				System.out.println("you have unfinished session, do you want to continue it ? (Y/n)");
+				String answer = console.readLine();
+				runPrevSession = answer.toLowerCase().equals("y");
 			}
 		}
+		
+		if (runPrevSession) {
+			
+		} else {
+			for (int i = 0; i < args.length; i++) {
 
-		// check if input and exec module were set
-		if (inputFile == null)
-			Logger.error("No input file set");
-		if (execModule == null)
-			Logger.error("No module with stage rules set");
-		if (global.getOption(Common.CONFIG).isEmpty())
-			Logger.error("Configuration file not set");
+				if (("-c").equals(args[i]) || ("--config").equals(args[i])) {
 
-		loadConfig(global.getOption(Common.CONFIG));
+					if (i + 1 <= args.length) {
+						global.add(Common.CONFIG, args[i + 1]);
+						i++;
+					}
+				}
 
-		global.add(Common.INPUT, Utils.getInputFile());
+				else if (("-o").equals(args[i]) || ("--output").equals(args[i])) {
+
+					if (i + 1 <= args.length) {
+						global.add(Common.PROJECT, args[i + 1]);
+						i++;
+					}
+				}
+
+				else if (("-m").equals(args[i]) || ("--module").equals(args[i])) {
+					if (i + 1 <= args.length) {
+						global.add(Common.MODULE, args[i + 1]);
+						i++;
+					}
+				} else if (("-s").equals(args[i]) || ("--suggest").equals(args[i])) {
+					if (i + 1 <= args.length) {
+						global.add(Common.SUGGEST, args[i + 1]);
+						i++;
+					}
+
+				} else {
+					if (inputFile == null) {
+						System.out.println("INPUT FILE:" + args[i]);
+						inputFile = args[i];
+					} else {
+						System.out.println("EXEC MODULE:" + args[i]);
+						execModule = args[i];
+					}
+				}
+			}
+
+
+			// check if input and exec module were set
+			if (inputFile == null)
+				Logger.error("No input file set");
+			if (execModule == null)
+				Logger.error("No module with stage rules set");
+			if (global.getOption(Common.CONFIG).isEmpty())
+				Logger.error("Configuration file not set");
+	
+			loadConfig(global.getOption(Common.CONFIG));	
+			global.add(Common.INPUT, Utils.getInputFile());
+		}
+		
 		// make input duplication and copy it
 		Utils.cloneFile(inputFile, global.getOption(Common.INPUT));
+		
 		Parser parser = Parser.getInstance();
 
 		// create output folder
@@ -146,9 +167,8 @@ public class main {
 		}
 		if (Utils.createFolder(global.getOption(Common.OUTPUT),
 				global.getOption(Common.PROJECT)) == false)
-			Logger.info("Can't create output folder:"
-
-			+ global.getOption(Common.PROJECT));
+			Logger.error("Can't create output folder:"
+					+ global.getOption(Common.PROJECT));
 		// copy input file
 
 		File projectFolder = new File(global.getOption(Common.OUTPUT),
@@ -158,43 +178,45 @@ public class main {
 		File outputFile = new File(projectFolder, "output.txt");
 		Utils.cloneFile(inputFile, projectFile.getAbsolutePath());
 
-		for (Options ModuleStage : parser.parse(execModule)) {
-			try {
-				out = new PrintWriter(new BufferedWriter(new FileWriter(
-						outputFile.getAbsolutePath(), true)));
-			} catch (IOException e) {
-				Logger.error(e.getMessage());
-			}
-
-			for (String cracked : Runner.getInstance().runModule(ModuleStage)) {
-				if (!result.contains(cracked)) {
-					result.add(cracked);
-					// out.println(cracked);
+		if(session.startSession(global.getOptions())) {
+			for (Options ModuleStage : parser.parse("test.xml")) {
+				try {
+					out = new PrintWriter(new BufferedWriter(new FileWriter(
+							outputFile.getAbsolutePath(), true)));
+				} catch (IOException e) {
+					Logger.error(e.getMessage());
 				}
-			}
-			out.close();
-			// append to outputfile
-			// check if only one hash per file
-			for (String oneSample : hashFile) {
-				if (global.getOption(Common.MODULE).equalsIgnoreCase(oneSample)) {
-					if (result.size() > 0)// if founded for files with only one
-						founded = true;
+	
+				for (String cracked : Runner.getInstance().runModule(ModuleStage)) {
+					if (!result.contains(cracked)) {
+						result.add(cracked);
+						out.println(cracked);
+					}
 				}
+				out.close();
+				// append to outputfile
+				// check if only one hash per file
+				for (String oneSample : hashFile) {
+					if (global.getOption(Common.MODULE).equalsIgnoreCase(oneSample)) {
+						if (result.size() > 0)// if founded for files with only one
+							founded = true;
+					}
+				}
+				if (founded)
+					break;
+	
+				// oneline hashes cant be rebuild
+	
+				if (!hashFile.contains(global.getOption(Common.MODULE)))
+					Utils.rebuildInputFile(result, CommandLine.getInstance()
+							.getOption(Common.INPUT));
+	
 			}
-			if (founded)
-				break;
-
-			// oneline hashes cant be rebuild
-
-			if (!hashFile.contains(global.getOption(Common.MODULE)))
-				Utils.rebuildInputFile(result, CommandLine.getInstance()
-						.getOption(Common.INPUT));
-
+			for (String tmp : result) {
+				System.out.println(tmp);
+			}
+			session.finishSession();
 		}
-		for (String tmp : result) {
-			System.out.println(tmp);
-		}
-
 		Utils.deleteFile(global.getOption(Common.INPUT));
 	}
 }
