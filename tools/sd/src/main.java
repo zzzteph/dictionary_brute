@@ -25,6 +25,7 @@ public class main {
 
 	static void loadConfig(String configPath) {
 
+		System.out.println(configPath);
 		CommandLine global = CommandLine.getInstance();
 		if (configPath == null)
 			configPath = "config";
@@ -63,6 +64,7 @@ public class main {
 		boolean founded = false;
 		CommandLine global = CommandLine.getInstance();
 		String inputFile = null;
+		String execModule = null;
 		PrintWriter out = null;
 		hashFile.add("2500");// WPA/WPA2
 		hashFile.add("5200");// Password Safe v3
@@ -127,15 +129,27 @@ public class main {
 						global.add(Common.SUGGEST, args[i + 1]);
 						i++;
 					}
-				}
 
-				else {
-					System.out.println("INPUT FILE:" + args[i]);
-					inputFile = args[i];
-
+				} else {
+					if (inputFile == null) {
+						System.out.println("INPUT FILE:" + args[i]);
+						inputFile = args[i];
+					} else {
+						System.out.println("EXEC MODULE:" + args[i]);
+						execModule = args[i];
+					}
 				}
 			}
 
+
+			// check if input and exec module were set
+			if (inputFile == null)
+				Logger.error("No input file set");
+			if (execModule == null)
+				Logger.error("No module with stage rules set");
+			if (global.getOption(Common.CONFIG).isEmpty())
+				Logger.error("Configuration file not set");
+	
 			loadConfig(global.getOption(Common.CONFIG));	
 			global.add(Common.INPUT, Utils.getInputFile());
 		}
@@ -155,7 +169,6 @@ public class main {
 				global.getOption(Common.PROJECT)) == false)
 			Logger.error("Can't create output folder:"
 					+ global.getOption(Common.PROJECT));
-		
 		// copy input file
 
 		File projectFolder = new File(global.getOption(Common.OUTPUT),

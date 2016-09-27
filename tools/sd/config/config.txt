@@ -1,0 +1,3 @@
+EXEC=/home/inkz/Downloads/hashcat-3.10/hashcat64.bin
+MAINDIR=/home/inkz/inkz/dsec/dictionary_brute/tools/sd/
+OUTPUT=/home/inkz/inkz/dsec/db_test/hashes_output/
