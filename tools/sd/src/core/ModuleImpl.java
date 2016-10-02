@@ -53,7 +53,6 @@ public abstract class ModuleImpl implements IModule {
 			cmd.add(addOptions);
 		}
 		System.out.println("Command" + cmd.toString());
-		session.addCommand(cmd);
 		
 		try {
  			command = new ProcessBuilder(cmd);

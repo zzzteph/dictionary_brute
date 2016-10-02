@@ -43,38 +43,20 @@ public class SessionHandler {
 				+ "'id' INTEGER PRIMARY KEY AUTOINCREMENT,"
 				+ "'started' DATETIME,"
 				+ "'finished' DATETIME,"
-				+ "'cmd_options' TEXT,"
-				+ "'options' TEXT);");
+				+ "'project' TEXT,"
+				+ "'project_folder' TEXT,"
+				+ "'hashfile' TEXT,"
+				+ "'outputfile' TEXT);");
 	}
 	
-	private String optionsToString(Map<String, String> options){
-		String result = "";
-		for(Entry<String,String> option : options.entrySet()) {
-			result += option.getKey() + "=" + option.getValue() + ";";
-		}
-		return result;
-	}
-	
-	private String optionsToString(List<String> options){
-		String result = "";
-		for(String option : options) {
-			result += option + ";";
-		}
-		return result;
-	}
-	
-	public Map<String, Object> checkPreviousSession(){
+	public Integer checkPreviousSession(String projectFolder, String project, String hashfile){
 		try {
 			ResultSet rs = statement.executeQuery("SELECT * FROM `session` "
-					+ "WHERE `finished` IS NULL "
+					+ "WHERE `finished` IS NULL AND `project_folder` = '"+projectFolder+"' AND `project` = '"+project+"' AND `hashfile` = '"+hashfile+"'"
 					+ "ORDER BY `started` DESC "
 					+ "LIMIT 1");
 			if(rs.next()){
-				Map<String, Object> sessionObject = new HashMap<String, Object>();
-				sessionObject.put("id", rs.getInt(1));
-				sessionObject.put("cmd_options", rs.getInt(4));
-				sessionObject.put("options", rs.getInt(5));
-				return sessionObject;
+				return rs.getInt(1);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -93,9 +75,12 @@ public class SessionHandler {
 		return false;
 	}
 	
-	public Boolean startSession(Map<String, String> options){
+	public Boolean startSession(Integer previousSession, String project, String projectFolder, String hashfile, String outputfile){
+		if (previousSession != null) {
+			finishSession(previousSession);
+		}
 		try {
-			statement.execute("INSERT INTO 'session' ('started', 'options') VALUES (CURRENT_TIMESTAMP, '"+optionsToString(options)+"'); ");
+			statement.execute("INSERT INTO 'session' ('project', 'project_folder', 'hashfile', 'outputfile', 'started') VALUES ('"+project+"', '"+projectFolder+"','"+hashfile+"', '"+outputfile+"' ,CURRENT_TIMESTAMP); ");
 			ResultSet key = statement.getGeneratedKeys();
 			if (key.next()) {
 				currentSession = key.getInt(1);
@@ -109,30 +94,13 @@ public class SessionHandler {
 	}
 	
 	public Boolean finishSession(){
-		try {
-			statement.executeUpdate("UPDATE 'session' set 'finished' = CURRENT_TIMESTAMP WHERE id = "+currentSession+"; ");
-			return true;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return false;
+		return finishSession(currentSession);
 	}
 	
 	public Boolean finishSession(Integer sessionId){
 		try {
 			statement.executeUpdate("UPDATE 'session' set 'finished' = CURRENT_TIMESTAMP WHERE id = "+sessionId+"; ");
 			return true;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return false;
-	}
-	
-	public Boolean addCommand(List<String> cmd){
-		try {
-			statement.executeUpdate("UPDATE 'session' set 'cmd_options' = '"+optionsToString(cmd)+"' WHERE id = "+currentSession+"; ");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

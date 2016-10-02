@@ -105,6 +105,25 @@ public class Utils {
 		writeToFile(InputFile, file);
 
 	}
+	
+	public static void rebuildInputFile(String OutputFile, String InputFile) {
+		List<String> results = readFileUniq(InputFile);
+		List<String> file = readFileUniq(InputFile);
+		for (String crackedPasswords : results) {
+			int i = 0;
+			for (String uncrackedPasswords : file) {
+				if (crackedPasswords.contains(uncrackedPasswords)) {
+					System.out.println(crackedPasswords);
+					file.remove(i);
+					break;
+				}
+				i++;
+			}
+		}
+
+		writeToFile(InputFile, file);
+
+	}
 
 	public static List<String> readFileUniq(String file) {
 		HashSet<String> temp = new HashSet<String>();
