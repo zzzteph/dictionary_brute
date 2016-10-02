@@ -65,6 +65,7 @@ public class main {
 		CommandLine global = CommandLine.getInstance();
 		String inputFile = null;
 		String execModule = null;
+		Boolean runPrevSession = false;
 		PrintWriter out = null;
 		hashFile.add("2500");// WPA/WPA2
 		hashFile.add("5200");// Password Safe v3
@@ -86,73 +87,72 @@ public class main {
 		hashFile.add("6241");// TrueCrypt 5.0+
 		hashFile.add("6242");// TrueCrypt 5.0+
 		hashFile.add("6243");// TrueCrypt 5.0+
-
-		Boolean runPrevSession = false;
-		Map<String, Object> prevSession = session.checkPreviousSession();
-		if(prevSession != null) {
-			Console console = System.console();
-			if (console != null) {
-				System.out.println("you have unfinished session, do you want to continue it ? (Y/n)");
-				String answer = console.readLine();
-				runPrevSession = answer.toLowerCase().equals("y");
-			}
-		}
 		
-		if (runPrevSession) {
-			
-		} else {
-			for (int i = 0; i < args.length; i++) {
+		for (int i = 0; i < args.length; i++) {
 
-				if (("-c").equals(args[i]) || ("--config").equals(args[i])) {
+			if (("-c").equals(args[i]) || ("--config").equals(args[i])) {
 
-					if (i + 1 <= args.length) {
-						global.add(Common.CONFIG, args[i + 1]);
-						i++;
-					}
-				}
-
-				else if (("-o").equals(args[i]) || ("--output").equals(args[i])) {
-
-					if (i + 1 <= args.length) {
-						global.add(Common.PROJECT, args[i + 1]);
-						i++;
-					}
-				}
-
-				else if (("-m").equals(args[i]) || ("--module").equals(args[i])) {
-					if (i + 1 <= args.length) {
-						global.add(Common.MODULE, args[i + 1]);
-						i++;
-					}
-				} else if (("-s").equals(args[i]) || ("--suggest").equals(args[i])) {
-					if (i + 1 <= args.length) {
-						global.add(Common.SUGGEST, args[i + 1]);
-						i++;
-					}
-
-				} else {
-					if (inputFile == null) {
-						System.out.println("INPUT FILE:" + args[i]);
-						inputFile = args[i];
-					} else {
-						System.out.println("EXEC MODULE:" + args[i]);
-						execModule = args[i];
-					}
+				if (i + 1 <= args.length) {
+					global.add(Common.CONFIG, args[i + 1]);
+					i++;
 				}
 			}
 
+			else if (("-o").equals(args[i]) || ("--output").equals(args[i])) {
 
-			// check if input and exec module were set
-			if (inputFile == null)
-				Logger.error("No input file set");
-			if (execModule == null)
-				Logger.error("No module with stage rules set");
-			if (global.getOption(Common.CONFIG).isEmpty())
-				Logger.error("Configuration file not set");
-	
-			loadConfig(global.getOption(Common.CONFIG));	
-			global.add(Common.INPUT, Utils.getInputFile());
+				if (i + 1 <= args.length) {
+					global.add(Common.PROJECT, args[i + 1]);
+					i++;
+				}
+			}
+
+			else if (("-m").equals(args[i]) || ("--module").equals(args[i])) {
+				if (i + 1 <= args.length) {
+					global.add(Common.MODULE, args[i + 1]);
+					i++;
+				}
+			} 
+			
+			else if (("-p").equals(args[i]) || ("--project").equals(args[i])) {
+				if (i + 1 <= args.length) {
+					global.add(Common.PROJECT, args[i + 1]);
+					i++;
+				}
+			} 
+			
+			else if (("-s").equals(args[i]) || ("--suggest").equals(args[i])) {
+				if (i + 1 <= args.length) {
+					global.add(Common.SUGGEST, args[i + 1]);
+					i++;
+				}
+			} 
+			
+			else if (("--continue").equals(args[i])) {
+				runPrevSession = true;
+			} 
+			
+			else {
+				if (inputFile == null) {
+					System.out.println("INPUT FILE:" + args[i]);
+					inputFile = args[i];
+				} else {
+					System.out.println("EXEC MODULE:" + args[i]);
+					execModule = args[i];
+				}
+			}
 		}
+
+
+		// check if input and exec module were set
+		if (inputFile == null)
+			Logger.error("No input file set");
+		if (execModule == null)
+			Logger.error("No module with stage rules set");
+		if (global.getOption(Common.CONFIG).isEmpty())
+			Logger.error("Configuration file not set");
+
+		loadConfig(global.getOption(Common.CONFIG));	
+		global.add(Common.INPUT, Utils.getInputFile());
 		
 		// make input duplication and copy it
 		Utils.cloneFile(inputFile, global.getOption(Common.INPUT));
@@ -177,8 +177,28 @@ public class main {
 				new File(inputFile).getName());
 		File outputFile = new File(projectFolder, "output.txt");
 		Utils.cloneFile(inputFile, projectFile.getAbsolutePath());
+		
+		System.out.println(""+projectFolder.getAbsolutePath()+" | "+global.getOption(Common.PROJECT)+" | "+inputFile);
+		
+		Integer prevSession = session.checkPreviousSession(projectFolder.getAbsolutePath(),global.getOption(Common.PROJECT),inputFile);
+		if(prevSession != null) {
+			Console console = System.console();
+			if (console != null) {
+				System.out.println("you have unfinished session, do you want to continue it ? (Y/n)");
+				String answer = console.readLine();
+				runPrevSession = answer.toLowerCase().equals("y");
+			}
+		}
+		
+		if (runPrevSession) {
+			if (prevSession != null) {
+				Utils.rebuildInputFile(outputFile.getAbsolutePath(),global.getOption(Common.INPUT));
+			} else {
+				System.out.println("no unfinished sessions found");
+			}
+		}
 
-		if(session.startSession(global.getOptions())) {
+		if(session.startSession(prevSession, global.getOption(Common.PROJECT),projectFolder.getAbsolutePath(),inputFile,outputFile.getAbsolutePath())) {
 			for (Options ModuleStage : parser.parse("test.xml")) {
 				try {
 					out = new PrintWriter(new BufferedWriter(new FileWriter(
