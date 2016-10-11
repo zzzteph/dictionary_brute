@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import common.Logger;
 import common.Utils;
@@ -87,7 +86,7 @@ public class main {
 		hashFile.add("6241");// TrueCrypt 5.0+
 		hashFile.add("6242");// TrueCrypt 5.0+
 		hashFile.add("6243");// TrueCrypt 5.0+
-		
+
 		for (int i = 0; i < args.length; i++) {
 
 			if (("-c").equals(args[i]) || ("--config").equals(args[i])) {
@@ -111,26 +110,26 @@ public class main {
 					global.add(Common.MODULE, args[i + 1]);
 					i++;
 				}
-			} 
-			
+			}
+
 			else if (("-p").equals(args[i]) || ("--project").equals(args[i])) {
 				if (i + 1 <= args.length) {
 					global.add(Common.PROJECT, args[i + 1]);
 					i++;
 				}
-			} 
-			
+			}
+
 			else if (("-s").equals(args[i]) || ("--suggest").equals(args[i])) {
 				if (i + 1 <= args.length) {
 					global.add(Common.SUGGEST, args[i + 1]);
 					i++;
 				}
-			} 
-			
+			}
+
 			else if (("--continue").equals(args[i])) {
 				runPrevSession = true;
-			} 
-			
+			}
+
 			else {
 				if (inputFile == null) {
 					System.out.println("INPUT FILE:" + args[i]);
@@ -142,7 +141,6 @@ public class main {
 			}
 		}
 
-
 		// check if input and exec module were set
 		if (inputFile == null)
 			Logger.error("No input file set");
@@ -151,12 +149,12 @@ public class main {
 		if (global.getOption(Common.CONFIG).isEmpty())
 			Logger.error("Configuration file not set");
 
-		loadConfig(global.getOption(Common.CONFIG));	
+		loadConfig(global.getOption(Common.CONFIG));
 		global.add(Common.INPUT, Utils.getInputFile());
-		
+
 		// make input duplication and copy it
 		Utils.cloneFile(inputFile, global.getOption(Common.INPUT));
-		
+
 		Parser parser = Parser.getInstance();
 
 		// create output folder
@@ -177,37 +175,45 @@ public class main {
 				new File(inputFile).getName());
 		File outputFile = new File(projectFolder, "output.txt");
 		Utils.cloneFile(inputFile, projectFile.getAbsolutePath());
-		
-		System.out.println(""+projectFolder.getAbsolutePath()+" | "+global.getOption(Common.PROJECT)+" | "+inputFile);
-		
-		Integer prevSession = session.checkPreviousSession(projectFolder.getAbsolutePath(),global.getOption(Common.PROJECT),inputFile);
-		if(prevSession != null) {
+
+		System.out.println("" + projectFolder.getAbsolutePath() + " | "
+				+ global.getOption(Common.PROJECT) + " | " + inputFile);
+
+		Integer prevSession = session.checkPreviousSession(
+				projectFolder.getAbsolutePath(),
+				global.getOption(Common.PROJECT), inputFile);
+		if (prevSession != null) {
 			Console console = System.console();
 			if (console != null) {
-				System.out.println("you have unfinished session, do you want to continue it ? (Y/n)");
+				System.out
+						.println("you have unfinished session, do you want to continue it ? (Y/n)");
 				String answer = console.readLine();
 				runPrevSession = answer.toLowerCase().equals("y");
 			}
 		}
-		
+
 		if (runPrevSession) {
 			if (prevSession != null) {
-				Utils.rebuildInputFile(outputFile.getAbsolutePath(),global.getOption(Common.INPUT));
+				Utils.rebuildInputFile(outputFile.getAbsolutePath(),
+						global.getOption(Common.INPUT));
 			} else {
 				System.out.println("no unfinished sessions found");
 			}
 		}
 
-		if(session.startSession(prevSession, global.getOption(Common.PROJECT),projectFolder.getAbsolutePath(),inputFile,outputFile.getAbsolutePath())) {
-			for (Options ModuleStage : parser.parse("test.xml")) {
+		if (session.startSession(prevSession, global.getOption(Common.PROJECT),
+				projectFolder.getAbsolutePath(), inputFile,
+				outputFile.getAbsolutePath())) {
+			for (Options ModuleStage : parser.parse(execModule)) {
 				try {
 					out = new PrintWriter(new BufferedWriter(new FileWriter(
 							outputFile.getAbsolutePath(), true)));
 				} catch (IOException e) {
 					Logger.error(e.getMessage());
 				}
-	
-				for (String cracked : Runner.getInstance().runModule(ModuleStage)) {
+
+				for (String cracked : Runner.getInstance().runModule(
+						ModuleStage)) {
 					if (!result.contains(cracked)) {
 						result.add(cracked);
 						out.println(cracked);
@@ -217,20 +223,22 @@ public class main {
 				// append to outputfile
 				// check if only one hash per file
 				for (String oneSample : hashFile) {
-					if (global.getOption(Common.MODULE).equalsIgnoreCase(oneSample)) {
-						if (result.size() > 0)// if founded for files with only one
+					if (global.getOption(Common.MODULE).equalsIgnoreCase(
+							oneSample)) {
+						if (result.size() > 0)// if founded for files with only
+												// one
 							founded = true;
 					}
 				}
 				if (founded)
 					break;
-	
+
 				// oneline hashes cant be rebuild
-	
+
 				if (!hashFile.contains(global.getOption(Common.MODULE)))
 					Utils.rebuildInputFile(result, CommandLine.getInstance()
 							.getOption(Common.INPUT));
-	
+
 			}
 			for (String tmp : result) {
 				System.out.println(tmp);

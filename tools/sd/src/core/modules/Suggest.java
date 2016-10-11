@@ -43,6 +43,7 @@ public class Suggest extends ModuleImpl {
 	}
 
 	public List<String> run() {
+		System.out.println("Suggester run");
 		init();
 		HashSet<String> words = new HashSet<String>();
 		HashSet<String> swords = new HashSet<String>();

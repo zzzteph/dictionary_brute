@@ -1,3 +1,8 @@
-EXEC=/home/inkz/Downloads/hashcat-3.10/hashcat64.bin
-MAINDIR=/home/inkz/inkz/dsec/dictionary_brute/tools/sd/
-OUTPUT=/home/inkz/inkz/dsec/db_test/hashes_output/
+#EXEC=/home/inkz/Downloads/hashcat-3.10/hashcat64.bin
+#MAINDIR=/home/inkz/inkz/dsec/dictionary_brute/tools/sd/
+#OUTPUT=/home/inkz/inkz/dsec/db_test/hashes_output/
+
+
+EXEC=/home/steph/hashcat/hashcat-cli64.bin
+MAINDIR=/home/steph/dictionary_brute/tools/sd/
+OUTPUT=/home/steph/dictionary_brute/output/
