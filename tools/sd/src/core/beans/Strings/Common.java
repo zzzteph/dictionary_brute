@@ -3,15 +3,14 @@ package core.beans.Strings;
 public interface Common {
 
 	public static final String CONFIG = "CONFIG";// path to config folder
-
 	public static final String RULES = "RULES";
 	public static final String MODULE = "MODULE";
 	public static final String MAINDIR = "MAINDIR";
 	public static final String EXEC = "EXEC";
 	public static final String INPUT = "INPUT";
 	public static final String OUTPUT = "OUTPUT";
-	public static final String TAIL = "TAIL";
-	public static final String PROJECT = "PROJECT";
+	public static final String TMP = "TMP";
+
 	public static final String EXEC_STAGE = "EXEC_STAGE";
 
 	// dictionary

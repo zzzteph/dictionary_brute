@@ -1,5 +1,6 @@
 <root>
-	
+		<module class="ESSIDsuggest">
+	</module>
 	<module class="suggest">
 	</module>
 	

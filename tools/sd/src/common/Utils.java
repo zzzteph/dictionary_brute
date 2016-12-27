@@ -20,6 +20,9 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import core.beans.CommandLine;
+import core.beans.Strings.Common;
+
 public class Utils {
 	public static void cloneFile(String source, String dest) {
 		InputStream is = null;
@@ -105,7 +108,7 @@ public class Utils {
 		writeToFile(InputFile, file);
 
 	}
-	
+
 	public static void rebuildInputFile(String OutputFile, String InputFile) {
 		List<String> results = readFileUniq(InputFile);
 		List<String> file = readFileUniq(InputFile);
@@ -191,16 +194,7 @@ public class Utils {
 	}
 
 	public static String getOutputFile() {
-		
-		File outFile = new File(System.getProperty("java.io.tmpdir"),
-				getRandomString());
-		try {
-			outFile.createNewFile();
-		} catch (IOException e) {
-			//TODO: разрулить эксепшн 
-			e.printStackTrace();
-		}
-		return outFile.getAbsolutePath();
+		return CommandLine.getInstance().getOption(Common.OUTPUT);
 	}
 
 	public static String getInputFile() {
@@ -278,6 +272,22 @@ public class Utils {
 		}
 
 		return null;
+	}
+
+	public static List<String> leeter(String str) {
+		List<String> ret = new ArrayList<String>();// one letter leet
+		ret.add(str.replace("o", "0").replace("O", "0"));
+		ret.add(str.replace("a", "@").replace("A", "@"));
+		ret.add(str.replace("a", "4").replace("A", "4"));
+		ret.add(str.replace("s", "$").replace("S", "$"));
+		ret.add(str.replace("s", "5").replace("S", "5"));
+		ret.add(str.replace("e", "3").replace("E", "3"));
+		ret.add(str.replace("t", "7").replace("T", "7"));
+		ret.add(str.replace("g", "6").replace("G", "6"));
+		ret.add(str.replace("b", "6").replace("B", "6"));
+		ret.add(str.replace("i", "1").replace("I", "1"));
+		// two letter leet
+		return ret;
 	}
 
 }
