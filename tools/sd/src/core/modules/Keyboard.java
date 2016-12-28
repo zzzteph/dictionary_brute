@@ -28,7 +28,7 @@ public class Keyboard extends ModuleImpl {
 	HashSet<Part> passwords;
 
 	PrintWriter writer;
-	String tempName = "temp_brute_file";
+	
 	int size = 0;
 
 	Boolean policy = false;
@@ -158,7 +158,7 @@ public class Keyboard extends ModuleImpl {
 	void runExternal() {
 
 		this.tail.clear();
-		this.tail.add(tempName);
+		this.tail.add( Utils.getTMPFile());
 		for (String tmp : super.run()) {
 			ret.add(tmp);
 		}
@@ -170,9 +170,9 @@ public class Keyboard extends ModuleImpl {
 			writer.close();
 			runExternal();
 			size = 0;
-			Utils.deleteFile(tempName);
+			Utils.deleteFile( Utils.getTMPFile());
 			try {
-				writer = new PrintWriter(tempName, "UTF-8");
+				writer = new PrintWriter( Utils.getTMPFile(), "UTF-8");
 			} catch (FileNotFoundException e) {
 				Logger.error(e.getMessage());
 			} catch (UnsupportedEncodingException e) {
@@ -188,7 +188,7 @@ public class Keyboard extends ModuleImpl {
 
 		runExternal();
 
-		(new File(tempName)).delete();
+		(new File( Utils.getTMPFile())).delete();
 
 	}
 
@@ -390,11 +390,10 @@ public class Keyboard extends ModuleImpl {
 		if (Boolean.parseBoolean(options.get(Common.OPTIMIZATION)))
 			optimization = true;
 
-		tempName = Utils.getOutputFile();
-		System.out.println(tempName);
+
 		try {
 
-			writer = new PrintWriter(tempName, "UTF-8");
+			writer = new PrintWriter( Utils.getTMPFile(), "UTF-8");
 		} catch (FileNotFoundException e) {
 			Logger.error(e.getMessage());
 		} catch (UnsupportedEncodingException e) {
@@ -415,7 +414,7 @@ public class Keyboard extends ModuleImpl {
 		generate(passwords, new Part(), length);
 		runExternal();
 		writer.close();
-		Utils.deleteFile(tempName);
+		Utils.deleteFile( Utils.getTMPFile());
 
 		return ret;
 	}

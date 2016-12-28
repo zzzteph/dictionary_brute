@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import common.Logger;
 import common.Utils;
@@ -20,9 +21,9 @@ import core.beans.Strings.SuggestConfig;
 
 public class Essidsuggest extends ModuleImpl {
 	List<String> passwords = new ArrayList<String>();
-
+	List<String> wifi = new ArrayList<String>();
 	List<String> spec = new ArrayList<String>();
-	HashSet<String> dictionary = new HashSet<String>();
+	Set<String> dictionary = new HashSet<String>();
 
 	String parseHCCAPFile(String filePath) {
 		StringBuilder ret = new StringBuilder();
@@ -50,19 +51,13 @@ public class Essidsuggest extends ModuleImpl {
 		return ret.toString();
 	}
 
-	void add(String tmp) {
-
-		if (!dictionary.contains(tmp))
-			dictionary.add(tmp);
-
-	}
-
 	public void init() {
 
 		passwords = Utils.readFileUniq(Paths.get(
 				CommandLine.getInstance().getOption(Common.CONFIG),
 				this.getClass().getSimpleName().toLowerCase(),
 				SuggestConfig.WIFI).toString());
+
 		spec = Utils.readFileUniq(Paths.get(
 				CommandLine.getInstance().getOption(Common.CONFIG),
 				this.getClass().getSimpleName().toLowerCase(),
@@ -74,30 +69,105 @@ public class Essidsuggest extends ModuleImpl {
 		System.out.println("ESSID Suggester run");
 		init();
 		HashSet<String> words = new HashSet<String>();
-		HashSet<String> swords = new HashSet<String>();
 		String ESSID = this.parseHCCAPFile(CommandLine.getInstance().getOption(
-				Common.INPUT));
+				Common.WORKFILE));
 
-		add(ESSID);
-		add(ESSID.toUpperCase());
-		add(ESSID.substring(0, 1).toUpperCase() + ESSID.substring(1));
+		wifi.add(ESSID);
+		wifi.add(ESSID.toLowerCase());
+		wifi.add(ESSID.toUpperCase());
+		wifi.add(ESSID.substring(0, 1).toUpperCase() + ESSID.substring(1));
 
-		for (String word : words) {
-			for (String sword : swords) {
-				add(word + sword);
-				add(sword + word);
-				for (String sep : spec) {
-					add(word + sword + sep);
-					add(sword + word + sep);
-
+		// replace all
+		ESSID = ESSID.replaceAll("[^a-zA-Z0-9]", "");
+		wifi.add(ESSID);
+		// leet add
+		if (options.get(Common.LEET) != null) {
+			for (int i = 0; i < wifi.size(); i++) {
+				for (String leet : Utils.leeter(wifi.get(i))) {
+					if (!wifi.contains(leet))
+						wifi.add(leet);
 				}
-
 			}
 		}
-		String dictName = Utils.getOutputFile();
+		for (String tmp : passwords) {
+			words.add(tmp);
+			words.add(tmp.toUpperCase());
+			if (tmp.length() > 1)
+				words.add(tmp.substring(0, 1).toUpperCase() + tmp.substring(1));
+		}
+
+		// passwords leet
+		List<String> tmpPasswords = new ArrayList<String>(words);
+		if (options.get(Common.LEET) != null) {
+			for (int i = 0; i < tmpPasswords.size(); i++) {
+
+				for (String leet : Utils.leeter(tmpPasswords.get(i))) {
+					words.add(leet);
+				}
+			}
+		}
+		tmpPasswords.clear();
+
+		for (String word : passwords) {
+			for (String ESSIDPass : wifi) {
+				dictionary.add(ESSIDPass.concat(word));
+				dictionary.add(word.concat(ESSIDPass));
+			}
+		}
+
+		for (String word : passwords) {
+			for (String ESSIDPass : wifi) {
+				for (String password2 : passwords) {
+					// spec+word+WIFI
+					dictionary.add(password2.concat(word.concat(ESSIDPass)));
+					// word+WIFI+spec
+					dictionary.add(word.concat(ESSIDPass).concat(password2));
+					// word+spec+WIFI
+					dictionary.add(word.concat(password2).concat(ESSIDPass));
+				}
+			}
+
+		}
+
+		// add dates
+		tmpPasswords = new ArrayList<String>(dictionary);
+		for (Integer i = 1950; i < 2100; i++) {
+			for (String tmp : wifi) {
+				dictionary.add(tmp.concat(i.toString()));
+			}
+		}
+		tmpPasswords.clear();
+
+		// add numbers
+		tmpPasswords = new ArrayList<String>(dictionary);
+		for (Integer i = 0; i < 100; i++) {
+			for (String tmp : wifi) {
+				dictionary.add(tmp.concat(i.toString()));
+			}
+		}
+		tmpPasswords.clear();
+
+		// add special chars
+		tmpPasswords = new ArrayList<String>(dictionary);
+		for (String word : tmpPasswords) {
+			for (String special : spec) {
+				dictionary.add(word.concat(special));
+			}
+		}
+		tmpPasswords.clear();
+
+		// remove passwords more 20 chars
+		tmpPasswords = new ArrayList<String>(dictionary);
+		dictionary.clear();
+		for (String tmp : tmpPasswords) {
+			if (tmp.length() < 21)
+				dictionary.add(tmp);
+		}
+
+	
 		PrintWriter writer = null;
 		try {
-			writer = new PrintWriter(dictName, "UTF-8");
+			writer = new PrintWriter( Utils.getTMPFile(), "UTF-8");
 		} catch (FileNotFoundException e) {
 			Logger.error(e.getMessage());
 		} catch (UnsupportedEncodingException e) {
@@ -105,19 +175,15 @@ public class Essidsuggest extends ModuleImpl {
 		}
 		for (String tmp : dictionary) {
 			writer.println(tmp);
-
-			for (Integer i = 0; i < 100; i++)
-				writer.println(tmp + i.toString());
-
 		}
 		writer.close();
-		this.tail.add(dictName);
+		this.tail.add( Utils.getTMPFile());
 		List<String> ret = new ArrayList<String>();
 		for (String tmp : super.run()) {
 			ret.add(tmp);
 		}
-		Utils.deleteFile(dictName);
+
+		Utils.deleteFile( Utils.getTMPFile());
 		return ret;
 	}
-
 }

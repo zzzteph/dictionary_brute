@@ -45,7 +45,7 @@ public abstract class ModuleImpl implements IModule {
 			cmd.add("-r");
 			cmd.add(options.get(Common.RULES));
 		}
-		cmd.add(options.get(Common.TMP));
+		cmd.add(options.get(Common.WORKFILE));
 		for (String addOptions : tail) {
 			cmd.add(addOptions);
 		}

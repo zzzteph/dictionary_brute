@@ -7,9 +7,12 @@ public interface Common {
 	public static final String MODULE = "MODULE";
 	public static final String MAINDIR = "MAINDIR";
 	public static final String EXEC = "EXEC";
-	public static final String INPUT = "INPUT";
-	public static final String OUTPUT = "OUTPUT";
-	public static final String TMP = "TMP";
+	public static final String INPUT = "INPUT"; // original file
+	public static final String OUTPUT = "OUTPUT";// temp output file
+	public static final String TMP = "TMP";// working tmp file
+	public static final String WORKFILE = "WORKFILE";// temp_input file
+	public static final String RESULT = "RESULT";// result file with cracked
+													// passwords
 
 	public static final String EXEC_STAGE = "EXEC_STAGE";
 
@@ -39,5 +42,6 @@ public interface Common {
 
 	// Suggester
 	public static final String SUGGEST = "SUGGEST";
+	public static final String LEET = "LEET";
 
 }

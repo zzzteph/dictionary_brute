@@ -29,7 +29,8 @@ public class main {
 		System.out.println("CONFIG:" + global.getOption(Common.CONFIG));
 		System.out.println("MODULE:" + global.getOption(Common.MODULE));
 		System.out.println("EXEC_STAGE:" + global.getOption(Common.EXEC_STAGE));
-
+		System.out.println("INPUT_WORK_FILE:"
+				+ global.getOption(Common.WORKFILE));
 	}
 
 	static void initProjectOptions() {
@@ -46,10 +47,15 @@ public class main {
 		try {
 			global.add(Common.INPUT, new File(global.getOption(Common.INPUT))
 					.getCanonicalPath().toString());
+			global.add(Common.WORKFILE,
+					new File(global.getOption(Common.INPUT)).getCanonicalPath()
+							.toString() + "_input");
 			global.add(Common.TMP, new File(global.getOption(Common.INPUT))
 					.getCanonicalPath().toString() + "_tmp");
 			global.add(Common.OUTPUT, new File(global.getOption(Common.INPUT))
 					.getCanonicalPath().toString() + "_out");
+			global.add(Common.RESULT, new File(global.getOption(Common.INPUT))
+					.getCanonicalPath().toString() + "_result");
 			global.add(Common.EXEC_STAGE,
 					new File(global.getOption(Common.EXEC_STAGE))
 							.getCanonicalPath().toString());
@@ -64,7 +70,7 @@ public class main {
 
 		// make input duplication and copy it
 		Utils.cloneFile(global.getOption(Common.INPUT),
-				global.getOption(Common.TMP));
+				global.getOption(Common.WORKFILE));
 	}
 
 	static void loadConfig(String configPath) {
@@ -147,24 +153,49 @@ public class main {
 				global.getOption(Common.EXEC_STAGE))) {
 			try {
 				out = new PrintWriter(new BufferedWriter(new FileWriter(
-						global.getOption(Common.OUTPUT), true)));
+						global.getOption(Common.RESULT), true)));
 			} catch (IOException e) {
 				Logger.error(e.getMessage());
 			}
 
 			for (String cracked : Runner.getInstance().runModule(ModuleStage)) {
-				if (!result.contains(cracked)) {
-					result.add(cracked);
-					out.println(cracked);
-				}
+				System.out.println(cracked);
+				result.add(cracked);
+				out.println(cracked);
+
 			}
 			out.close();
 
-			Utils.rebuildInputFile(result,
-					CommandLine.getInstance().getOption(Common.INPUT));
+			// file can't be rebuild if it is binary
+			if (CommandLine.getInstance().getOption(Common.MODULE)
+					.equalsIgnoreCase("2500")
+					|| CommandLine.getInstance().getOption(Common.MODULE)
+							.equalsIgnoreCase("5200")
+					|| CommandLine.getInstance().getOption(Common.MODULE)
+							.equalsIgnoreCase("5300")
+					|| CommandLine.getInstance().getOption(Common.MODULE)
+							.equalsIgnoreCase("5400")
+					|| CommandLine.getInstance().getOption(Common.MODULE)
+							.startsWith("62")
+					|| CommandLine.getInstance().getOption(Common.MODULE)
+							.equalsIgnoreCase("6600")
+					|| CommandLine.getInstance().getOption(Common.MODULE)
+							.equalsIgnoreCase("8200")
+					|| CommandLine.getInstance().getOption(Common.MODULE)
+							.equalsIgnoreCase("8800")
+					|| CommandLine.getInstance().getOption(Common.MODULE)
+							.equalsIgnoreCase("9000")) {
+				// nothing to do
+			} else {
+				Utils.rebuildInputFile(result, CommandLine.getInstance()
+						.getOption(Common.WORKFILE));
+			}
+			System.out.println("REBUILDED");
 
 		}
-		Utils.deleteFile(global.getOption(Common.INPUT));
+		System.out.println("Cleared");
+		Utils.deleteFile(global.getOption(Common.WORKFILE));
+		Utils.deleteFile(global.getOption(Common.TMP));
 
 	}
 }

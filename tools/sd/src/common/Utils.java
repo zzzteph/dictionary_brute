@@ -12,8 +12,11 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -197,6 +200,10 @@ public class Utils {
 		return CommandLine.getInstance().getOption(Common.OUTPUT);
 	}
 
+	public static String getTMPFile() {
+		return CommandLine.getInstance().getOption(Common.TMP);
+	}
+
 	public static String getInputFile() {
 		return getOutputFile();
 	}
@@ -274,19 +281,49 @@ public class Utils {
 		return null;
 	}
 
-	public static List<String> leeter(String str) {
-		List<String> ret = new ArrayList<String>();// one letter leet
-		ret.add(str.replace("o", "0").replace("O", "0"));
-		ret.add(str.replace("a", "@").replace("A", "@"));
-		ret.add(str.replace("a", "4").replace("A", "4"));
-		ret.add(str.replace("s", "$").replace("S", "$"));
-		ret.add(str.replace("s", "5").replace("S", "5"));
-		ret.add(str.replace("e", "3").replace("E", "3"));
-		ret.add(str.replace("t", "7").replace("T", "7"));
-		ret.add(str.replace("g", "6").replace("G", "6"));
-		ret.add(str.replace("b", "6").replace("B", "6"));
-		ret.add(str.replace("i", "1").replace("I", "1"));
-		// two letter leet
+	public static Set<String> leeter(String str) {
+		HashSet<String> ret = new HashSet<String>();// one letter leet
+		String temp = str;
+		Map<String, String> leet = new HashMap<String, String>();
+		leet.put("a", "4");
+		leet.put("s", "5");
+		leet.put("e", "3");
+		leet.put("t", "7");
+		leet.put("g", "6");
+		leet.put("o", "0");
+		leet.put("b", "6");
+		leet.put("i", "1");
+
+		for (Map.Entry<String, String> entry : leet.entrySet()) {
+			ret.add(str.replace(entry.getKey(), entry.getValue()));
+			ret.add(str.replace(entry.getKey().toUpperCase(), entry.getValue()));
+			ret.add(str.replace(entry.getKey(), entry.getValue()).replace(
+					entry.getKey().toUpperCase(), entry.getValue()));
+		}
+
+		for (Map.Entry<String, String> entry : leet.entrySet()) {
+			temp = temp.replace(entry.getKey(), entry.getValue());
+			temp = temp.replace(entry.getKey().toUpperCase(), entry.getValue());
+
+		}
+		ret.add(temp);
+		leet.put("a", "@");
+		leet.put("s", "$");
+		temp = str;
+		for (Map.Entry<String, String> entry : leet.entrySet()) {
+			ret.add(str.replace(entry.getKey(), entry.getValue()));
+			ret.add(str.replace(entry.getKey().toUpperCase(), entry.getValue()));
+			ret.add(str.replace(entry.getKey(), entry.getValue()).replace(
+					entry.getKey().toUpperCase(), entry.getValue()));
+		}
+
+		for (Map.Entry<String, String> entry : leet.entrySet()) {
+			temp = temp.replace(entry.getKey(), entry.getValue());
+			temp = temp.replace(entry.getKey().toUpperCase(), entry.getValue());
+
+		}
+
+		ret.add(temp);
 		return ret;
 	}
 

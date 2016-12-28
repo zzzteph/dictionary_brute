@@ -18,7 +18,7 @@ import core.beans.Strings.SuggestConfig;
 
 public class Suggest extends ModuleImpl {
 	List<String> passwords = new ArrayList<String>();
-
+	List<String> suggestWords = new ArrayList<String>();
 	List<String> spec = new ArrayList<String>();
 	HashSet<String> dictionary = new HashSet<String>();
 
@@ -46,82 +46,93 @@ public class Suggest extends ModuleImpl {
 		System.out.println("Suggester run");
 		init();
 		HashSet<String> words = new HashSet<String>();
-		HashSet<String> swords = new HashSet<String>();
-
-		if (CommandLine.getInstance().getOption(Common.SUGGEST) == null)
-			return new ArrayList<String>();
-		System.out.println(options.get(Common.SUGGEST));
 		for (String tmp : options.get(Common.SUGGEST).split(",")) {
-			if (tmp.length() > 1) {
-				swords.add(tmp);// test
-				swords.add(tmp.toUpperCase());
-				swords.add(tmp.substring(0, 1).toUpperCase() + tmp.substring(1));
-
-				String leet = tmp.replace("o", "0").replace("O", "0");
-				swords.add(leet);
-				swords.add(leet.toUpperCase());
-				swords.add(leet.substring(0, 1).toUpperCase()
-						+ tmp.substring(1));
-				leet = tmp.replace("a", "4").replace("A", "4");
-				swords.add(leet);
-				swords.add(leet.toUpperCase());
-				swords.add(leet.substring(0, 1).toUpperCase()
-						+ tmp.substring(1));
-				leet = tmp.replace("a", "@").replace("a", "@");
-				swords.add(leet);
-				swords.add(leet.toUpperCase());
-				swords.add(leet.substring(0, 1).toUpperCase()
-						+ tmp.substring(1));
-				leet = tmp.replace("s", "$").replace("S", "$");
-				swords.add(leet);
-				swords.add(leet.toUpperCase());
-				swords.add(leet.substring(0, 1).toUpperCase()
-						+ tmp.substring(1));
-
-				leet = tmp.replace("o", "0").replace("O", "0")
-						.replace("a", "4").replace("A", "4").replace("s", "$")
-						.replace("S", "$");
-
-				swords.add(leet);// test
-				swords.add(leet.toUpperCase());
-				swords.add(leet.substring(0, 1).toUpperCase()
-						+ tmp.substring(1));
-				leet = tmp.replace("o", "0").replace("O", "0")
-						.replace("a", "@").replace("A", "@").replace("s", "$")
-						.replace("S", "$");
-
-				swords.add(leet);// test
-				swords.add(leet.toUpperCase());
-				swords.add(leet.substring(0, 1).toUpperCase()
-						+ tmp.substring(1));
-			}
+			suggestWords.add(tmp);
+			suggestWords.add(tmp.toLowerCase());
+			suggestWords.add(tmp.toUpperCase());
+			suggestWords.add(tmp.substring(0, 1).toUpperCase()
+					+ tmp.substring(1));
 		}
 
-		for (String word : swords)
-			add(word);
-		for (String password : passwords) {
-			words.add(password);
-			words.add(password.toUpperCase());
-			words.add(password.substring(0, 1).toUpperCase()
-					+ password.substring(1));
-		}
-
-		for (String word : words) {
-			for (String sword : swords) {
-				add(word + sword);
-				add(sword + word);
-				for (String sep : spec) {
-					add(word + sword + sep);
-					add(sword + word + sep);
-
+		// replace all
+		if (options.get(Common.LEET) != null) {
+			// leet add
+			for (int i = 0; i < suggestWords.size(); i++) {
+				for (String leet : Utils.leeter(suggestWords.get(i))) {
+					if (!suggestWords.contains(leet))
+						suggestWords.add(leet);
 				}
-
 			}
 		}
-		String dictName = Utils.getOutputFile();
+		for (String tmp : passwords) {
+			words.add(tmp);
+			words.add(tmp.toUpperCase());
+			if (tmp.length() > 1)
+				words.add(tmp.substring(0, 1).toUpperCase() + tmp.substring(1));
+		}
+
+		// passwords leet
+		List<String> tmpPasswords = new ArrayList<String>(words);
+		if (options.get(Common.LEET) != null) {
+			for (int i = 0; i < tmpPasswords.size(); i++) {
+				for (String leet : Utils.leeter(tmpPasswords.get(i))) {
+					words.add(leet);
+				}
+			}
+		}
+		tmpPasswords.clear();
+
+		for (String word : passwords) {
+			for (String suggest : suggestWords) {
+				dictionary.add(suggest.concat(word));
+				dictionary.add(word.concat(suggest));
+			}
+		}
+
+		for (String word : passwords) {
+			for (String suggest : suggestWords) {
+				for (String password2 : passwords) {
+					// spec+word+WIFI
+					dictionary.add(password2.concat(word.concat(suggest)));
+					// word+WIFI+spec
+					dictionary.add(word.concat(suggest).concat(password2));
+					// word+spec+WIFI
+					dictionary.add(word.concat(password2).concat(suggest));
+				}
+			}
+
+		}
+
+		// add dates
+		tmpPasswords = new ArrayList<String>(dictionary);
+		for (Integer i = 1950; i < 2100; i++) {
+			for (String suggest : suggestWords) {
+				dictionary.add(suggest.concat(i.toString()));
+			}
+		}
+		tmpPasswords.clear();
+
+		// add numbers
+		tmpPasswords = new ArrayList<String>(dictionary);
+		for (Integer i = 0; i < 100; i++) {
+			for (String suggest : suggestWords) {
+				dictionary.add(suggest.concat(i.toString()));
+			}
+		}
+		tmpPasswords.clear();
+
+		// add special chars
+		tmpPasswords = new ArrayList<String>(dictionary);
+		for (String word : tmpPasswords) {
+			for (String special : spec) {
+				dictionary.add(word.concat(special));
+			}
+		}
+		tmpPasswords.clear();
+
 		PrintWriter writer = null;
 		try {
-			writer = new PrintWriter(dictName, "UTF-8");
+			writer = new PrintWriter( Utils.getTMPFile(), "UTF-8");
 		} catch (FileNotFoundException e) {
 			Logger.error(e.getMessage());
 		} catch (UnsupportedEncodingException e) {
@@ -129,18 +140,14 @@ public class Suggest extends ModuleImpl {
 		}
 		for (String tmp : dictionary) {
 			writer.println(tmp);
-
-			for (Integer i = 0; i < 100; i++)
-				writer.println(tmp + i.toString());
-
 		}
 		writer.close();
-		this.tail.add(dictName);
+		this.tail.add( Utils.getTMPFile());
 		List<String> ret = new ArrayList<String>();
 		for (String tmp : super.run()) {
 			ret.add(tmp);
 		}
-		Utils.deleteFile(dictName);
+		Utils.deleteFile( Utils.getTMPFile());
 		return ret;
 	}
 
