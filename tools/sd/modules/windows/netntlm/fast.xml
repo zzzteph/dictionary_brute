@@ -1,6 +1,10 @@
 <root>
 	
-
+<module class="Ntlmsuggest">
+</module>
+<module class="dictionary">
+<DICTIONARY>../../dictionary.dic</DICTIONARY>
+</module>
 	<module class="keyboard">
 		<keyboard>qwerty</keyboard>
 		<type>line</type>

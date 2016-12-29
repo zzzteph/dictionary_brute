@@ -1,15 +1,12 @@
 package core.modules;
 
-
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import common.Logger;
 import common.Utils;
@@ -18,144 +15,66 @@ import core.ModuleImpl;
 import core.beans.CommandLine;
 import core.beans.Strings.Common;
 
-
 public class Ntlmsuggest extends ModuleImpl {
-	List<String> passwords = new ArrayList<String>();
-	List<String> wifi = new ArrayList<String>();
-	List<String> spec = new ArrayList<String>();
-	Set<String> dictionary = new HashSet<String>();
 
-	String parseNTLMFile(String filePath) {
-		StringBuilder ret = new StringBuilder();
-		File hccapFile = new File(filePath);
-		byte[] bFile = new byte[(int) hccapFile.length()];
-		try {
-			FileInputStream fileInputStream = new FileInputStream(hccapFile);
-			fileInputStream.read(bFile);
-			fileInputStream.close();
-
-			if (bFile.length > 36) {
-				for (int i = 0; i < 36; i++) {
-					if (bFile[i] == 0)
-						break;
-					ret.append((char) bFile[i]);
+	private Map<String, String> parseNTLMFile(String filePath) {
+		Map<String, String> ret = new HashMap<String, String>();
+		List<String> hashes = Utils.readFileUniq(CommandLine.getInstance()
+				.getOption(Common.WORKFILE));
+		for (String hash : hashes) {
+			String[] parts = hash.split(":");
+			if (parts.length > 2) {
+				if (parts[0].length() > 2) {
+					ret.put(hash, parts[0]);
 				}
-
-			} else {
-				Logger.error("File less than 36 bytes");
 			}
-		} catch (Exception e) {
-			Logger.error(e.getMessage());
 		}
 
-		return ret.toString();
+		return ret;
 	}
 
-
-
-	public List<String> run() {
-		System.out.println("ESSID Suggester run");
-
-		HashSet<String> words = new HashSet<String>();
-		String ESSID = this.parseNTLMFile(CommandLine.getInstance().getOption(
-				Common.WORKFILE));
-
-		wifi.add(ESSID);
-		wifi.add(ESSID.toLowerCase());
-		wifi.add(ESSID.toUpperCase());
-		wifi.add(ESSID.substring(0, 1).toUpperCase() + ESSID.substring(1));
-
-		// replace all
-		ESSID = ESSID.replaceAll("[^a-zA-Z0-9]", "");
-		wifi.add(ESSID);
-		// leet add
-		if (options.get(Common.LEET) != null) {
-			for (int i = 0; i < wifi.size(); i++) {
-				for (String leet : Utils.leeter(wifi.get(i))) {
-					if (!wifi.contains(leet))
-						wifi.add(leet);
-				}
-			}
-		}
-		for (String tmp : passwords) {
-			words.add(tmp);
-			words.add(tmp.toUpperCase());
-			if (tmp.length() > 1)
-				words.add(tmp.substring(0, 1).toUpperCase() + tmp.substring(1));
-		}
-
-		// passwords leet
-		List<String> tmpPasswords = new ArrayList<String>(words);
-		if (options.get(Common.LEET) != null) {
-			for (int i = 0; i < tmpPasswords.size(); i++) {
-
-				for (String leet : Utils.leeter(tmpPasswords.get(i))) {
-					words.add(leet);
-				}
-			}
-		}
-		tmpPasswords.clear();
-
-		for (String word : passwords) {
-			for (String ESSIDPass : wifi) {
-				dictionary.add(ESSIDPass.concat(word));
-				dictionary.add(word.concat(ESSIDPass));
-			}
-		}
-
-		for (String word : passwords) {
-			for (String ESSIDPass : wifi) {
-				for (String password2 : passwords) {
-					// spec+word+WIFI
-					dictionary.add(password2.concat(word.concat(ESSIDPass)));
-					// word+WIFI+spec
-					dictionary.add(word.concat(ESSIDPass).concat(password2));
-					// word+spec+WIFI
-					dictionary.add(word.concat(password2).concat(ESSIDPass));
-				}
-			}
-
-		}
-
-		// add dates
-		tmpPasswords = new ArrayList<String>(dictionary);
-		for (Integer i = 1950; i < 2100; i++) {
-			for (String tmp : wifi) {
-				dictionary.add(tmp.concat(i.toString()));
-			}
-		}
-		tmpPasswords.clear();
-
-		// add numbers
-		tmpPasswords = new ArrayList<String>(dictionary);
-		for (Integer i = 0; i < 100; i++) {
-			for (String tmp : wifi) {
-				dictionary.add(tmp.concat(i.toString()));
-			}
-		}
-		tmpPasswords.clear();
-
-		// add special chars
-		tmpPasswords = new ArrayList<String>(dictionary);
-		for (String word : tmpPasswords) {
-			for (String special : spec) {
-				dictionary.add(word.concat(special));
-			}
-		}
-		tmpPasswords.clear();
-
-		// remove passwords more 20 chars
-		tmpPasswords = new ArrayList<String>(dictionary);
+	private void NTLMDictionary(String user) {
+		List<String> dictionary = new ArrayList<String>();
 		dictionary.clear();
-		for (String tmp : tmpPasswords) {
-			if (tmp.length() < 21)
-				dictionary.add(tmp);
+		List<String> users = new ArrayList<String>();
+		dictionary.add(user);
+		dictionary.add(user.toLowerCase());
+		dictionary.add(user.toUpperCase());
+		dictionary.add(user.substring(0, 1).toUpperCase() + user.substring(1));
+		dictionary.add(user.replaceAll("[^a-zA-Z0-9]", ""));
+		for (String tmp : dictionary) {
+			for (Integer j = 0; j < 100; j++) {
+				users.add(tmp.concat(j.toString()));
+			}
+			for (Integer j = 1900; j < 2100; j++) {
+				users.add(tmp.concat(j.toString()));
+			}
+		}
+		for (String tmp : users) {
+			dictionary.add(tmp);
+		}
+		users.clear();
+
+		for (String tmp : dictionary) {
+
+			users.add(tmp.concat("!"));
+			users.add(tmp.concat("@"));
+			users.add(tmp.concat("#"));
+			users.add(tmp.concat("$"));
+			users.add(tmp.concat("!@"));
+			users.add(tmp.concat("!@#"));
+			users.add(tmp.concat("!@#$"));
+
 		}
 
-	
+		for (String tmp : users) {
+			dictionary.add(tmp);
+		}
+		users.clear();
+
 		PrintWriter writer = null;
 		try {
-			writer = new PrintWriter( Utils.getTMPFile(), "UTF-8");
+			writer = new PrintWriter(Utils.getTMPFile(), "UTF-8");
 		} catch (FileNotFoundException e) {
 			Logger.error(e.getMessage());
 		} catch (UnsupportedEncodingException e) {
@@ -163,15 +82,48 @@ public class Ntlmsuggest extends ModuleImpl {
 		}
 		for (String tmp : dictionary) {
 			writer.println(tmp);
+
 		}
 		writer.close();
-		this.tail.add( Utils.getTMPFile());
-		List<String> ret = new ArrayList<String>();
-		for (String tmp : super.run()) {
-			ret.add(tmp);
-		}
 
-		Utils.deleteFile( Utils.getTMPFile());
+	}
+
+	private void makeTEMPNTLM(String key) {
+		writer = new PrintWriter(filename, "UTF-8");
+		for (String tmp : data) {
+			writer.println(tmp);
+		}
+		writer.close();
+
+	}
+
+	public List<String> run() {
+
+		System.out.println("NTLM");
+		List<String> ret = new ArrayList<String>();
+		this.tail.add(Utils.getTMPFile());
+		// make temp file
+		Utils.cloneFile(
+				CommandLine.getInstance().getOption(Common.WORKFILE),
+				CommandLine.getInstance().getOption(Common.WORKFILE)
+						.concat("_temp"));
+		for (Map.Entry<String, String> entry : this.parseNTLMFile(
+				CommandLine.getInstance().getOption(Common.WORKFILE))
+				.entrySet()) {
+			NTLMDictionary(entry.getValue());
+			makeTEMPNTLM(entry.getKey());
+			for (String tmp : super.run()) {
+				ret.add(tmp);
+			}
+
+		}
+		Utils.cloneFile(CommandLine.getInstance().getOption(Common.WORKFILE)
+				.concat("_temp"),
+				CommandLine.getInstance().getOption(Common.WORKFILE));
+		Utils.deleteFile(CommandLine.getInstance().getOption(Common.WORKFILE)
+				.concat("_temp"));
+		Utils.deleteFile(Utils.getTMPFile());
 		return ret;
 	}
+
 }

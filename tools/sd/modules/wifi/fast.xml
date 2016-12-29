@@ -1,4 +1,7 @@
 <root>
+<module class="dictionary">
+<DICTIONARY>../../dictionary.dic</DICTIONARY>
+</module>
 		<module class="ESSIDsuggest">
 	</module>
 	<module class="suggest">
