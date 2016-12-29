@@ -40,8 +40,7 @@ public class main {
 			Logger.error("No input file set");
 		if (global.getOption(Common.MODULE).isEmpty())
 			Logger.error("No module with stage rules set");
-		if (global.getOption(Common.CONFIG).isEmpty())
-			Logger.error("Configuration file not set");
+
 
 		// rebuilding full pathe's
 		try {
@@ -103,8 +102,9 @@ public class main {
 
 	}
 
-	void isDone() {
-
+	static void init() {
+		global = CommandLine.getInstance();
+		global.add(Common.CONFIG, "config");
 	}
 
 	public static void main(String[] args) {
@@ -112,6 +112,9 @@ public class main {
 		global = CommandLine.getInstance();
 		PrintWriter out = null;
 		List<String> result = new ArrayList<String>();
+		init();
+		
+		
 		for (int i = 0; i < args.length; i++) {
 
 			if (("-c").equals(args[i]) || ("--config").equals(args[i])) {

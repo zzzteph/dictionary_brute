@@ -29,7 +29,7 @@ public class Keyboard extends ModuleImpl {
 
 	PrintWriter writer;
 	
-	int size = 0;
+	Integer size = 0;
 
 	Boolean policy = false;
 	Boolean optimization = false;
@@ -159,6 +159,7 @@ public class Keyboard extends ModuleImpl {
 
 		this.tail.clear();
 		this.tail.add( Utils.getTMPFile());
+		
 		for (String tmp : super.run()) {
 			ret.add(tmp);
 		}
@@ -171,6 +172,7 @@ public class Keyboard extends ModuleImpl {
 			runExternal();
 			size = 0;
 			Utils.deleteFile( Utils.getTMPFile());
+			System.out.println("DELETED");
 			try {
 				writer = new PrintWriter( Utils.getTMPFile(), "UTF-8");
 			} catch (FileNotFoundException e) {
@@ -180,6 +182,7 @@ public class Keyboard extends ModuleImpl {
 			}
 		} else {
 			size++;
+			
 			writer.println(temp);
 		}
 	}
@@ -228,6 +231,7 @@ public class Keyboard extends ModuleImpl {
 					if (tmp.policyCheck() != false)
 						continue;
 
+			//	System.out.println(tmp.getPassword());
 				makeDictionary(tmp.getPassword());
 
 			}

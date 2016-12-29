@@ -1,6 +1,3 @@
 #EXEC=/home/inkz/Downloads/hashcat-3.10/hashcat64.bin
-#MAINDIR=/home/inkz/inkz/dsec/dictionary_brute/tools/sd/
-
-EXEC=/home/steph/hashcat/hashcat-cli64.bin
-MAINDIR=/home/steph/dictionary_brute/tools/sd/
-
+#EXEC=/home/steph/hashcat/hashcat-cli64.bin
+EXEC=D:\Downloads\hashcat-3.00\hashcat64.exe

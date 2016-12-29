@@ -22,8 +22,7 @@ public class Options {
 	public void add(String key, String value) {
 		key = key.toUpperCase();
 		value = value.trim();
-		value = value.replace("$MAINDIR", CommandLine.getInstance()
-				.getOption(Common.MAINDIR));
+
 		options.put(key, value);
 	}
 

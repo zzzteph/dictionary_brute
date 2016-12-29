@@ -44,8 +44,11 @@ public class Suggest extends ModuleImpl {
 
 	public List<String> run() {
 		System.out.println("Suggester run");
-		init();
+		List<String> ret = new ArrayList<String>();
 		HashSet<String> words = new HashSet<String>();
+		init();
+		if(options.get(Common.SUGGEST)==null) return ret;
+		if(options.get(Common.SUGGEST).split(",").length==0) return ret;
 		for (String tmp : options.get(Common.SUGGEST).split(",")) {
 			suggestWords.add(tmp);
 			suggestWords.add(tmp.toLowerCase());
@@ -143,10 +146,11 @@ public class Suggest extends ModuleImpl {
 		}
 		writer.close();
 		this.tail.add( Utils.getTMPFile());
-		List<String> ret = new ArrayList<String>();
+		
 		for (String tmp : super.run()) {
 			ret.add(tmp);
 		}
+	
 		Utils.deleteFile( Utils.getTMPFile());
 		return ret;
 	}

@@ -1,11 +1,11 @@
 package core.modules;
 
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,15 +17,15 @@ import common.Utils;
 import core.ModuleImpl;
 import core.beans.CommandLine;
 import core.beans.Strings.Common;
-import core.beans.Strings.SuggestConfig;
 
-public class Essidsuggest extends ModuleImpl {
+
+public class Ntlmsuggest extends ModuleImpl {
 	List<String> passwords = new ArrayList<String>();
 	List<String> wifi = new ArrayList<String>();
 	List<String> spec = new ArrayList<String>();
 	Set<String> dictionary = new HashSet<String>();
 
-	String parseHCCAPFile(String filePath) {
+	String parseNTLMFile(String filePath) {
 		StringBuilder ret = new StringBuilder();
 		File hccapFile = new File(filePath);
 		byte[] bFile = new byte[(int) hccapFile.length()];
@@ -51,25 +51,13 @@ public class Essidsuggest extends ModuleImpl {
 		return ret.toString();
 	}
 
-	public void init() {
 
-		passwords = Utils.readFileUniq(Paths.get(
-				CommandLine.getInstance().getOption(Common.CONFIG),
-				this.getClass().getSimpleName().toLowerCase(),
-				SuggestConfig.WIFI).toString());
-
-		spec = Utils.readFileUniq(Paths.get(
-				CommandLine.getInstance().getOption(Common.CONFIG),
-				this.getClass().getSimpleName().toLowerCase(),
-				SuggestConfig.SPEC).toString());
-
-	}
 
 	public List<String> run() {
 		System.out.println("ESSID Suggester run");
-		init();
+
 		HashSet<String> words = new HashSet<String>();
-		String ESSID = this.parseHCCAPFile(CommandLine.getInstance().getOption(
+		String ESSID = this.parseNTLMFile(CommandLine.getInstance().getOption(
 				Common.WORKFILE));
 
 		wifi.add(ESSID);
@@ -160,7 +148,7 @@ public class Essidsuggest extends ModuleImpl {
 		tmpPasswords = new ArrayList<String>(dictionary);
 		dictionary.clear();
 		for (String tmp : tmpPasswords) {
-			if (tmp.length() < 21 && tmp.length() >= 8)
+			if (tmp.length() < 21)
 				dictionary.add(tmp);
 		}
 

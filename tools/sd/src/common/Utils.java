@@ -143,9 +143,9 @@ public class Utils {
 			}
 			br.close();
 		} catch (FileNotFoundException ex) {
-			System.out.println(ex.getMessage());
+			Logger.info(ex.getMessage());
 		} catch (IOException ex) {
-			System.out.println(ex.getMessage());
+			Logger.info(ex.getMessage());
 		}
 
 		List<String> ret = new ArrayList<String>();
@@ -168,9 +168,9 @@ public class Utils {
 			}
 			br.close();
 		} catch (FileNotFoundException ex) {
-			System.out.println(ex.getMessage());
+			Logger.info(ex.getMessage());
 		} catch (IOException ex) {
-			System.out.println(ex.getMessage());
+			Logger.info(ex.getMessage());
 		}
 
 		return ret;

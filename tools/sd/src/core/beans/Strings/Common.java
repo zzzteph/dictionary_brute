@@ -3,9 +3,8 @@ package core.beans.Strings;
 public interface Common {
 
 	public static final String CONFIG = "CONFIG";// path to config folder
-	public static final String RULES = "RULES";
+
 	public static final String MODULE = "MODULE";
-	public static final String MAINDIR = "MAINDIR";
 	public static final String EXEC = "EXEC";
 	public static final String INPUT = "INPUT"; // original file
 	public static final String OUTPUT = "OUTPUT";// temp output file
@@ -16,6 +15,9 @@ public interface Common {
 
 	public static final String EXEC_STAGE = "EXEC_STAGE";
 
+	
+	
+	public static final String RULES = "RULES";
 	// dictionary
 	public static final String DICTIONARY = "DICTIONARY";
 
