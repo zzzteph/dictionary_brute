@@ -9,6 +9,7 @@ import core.beans.Strings.Common;
 
 public class Mask extends ModuleImpl {
 	public List<String> run() {
+		Logger.info("Mask working...");
 		if (!this.options.containsKey(Common.MASK))
 			Logger.error("NO CHARSET|BRUTEFORCE OPTIONS SET");
 

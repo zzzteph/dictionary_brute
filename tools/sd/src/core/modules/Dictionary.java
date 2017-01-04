@@ -5,13 +5,15 @@ import java.io.IOException;
 import java.util.List;
 
 import common.Logger;
-
+import common.Utils;
 import core.ModuleImpl;
 import core.beans.Strings.Common;
 
 public class Dictionary extends ModuleImpl {
 
+
 	public List<String> run() {
+		Logger.info("Dictionary working...");
 		if (!this.options.containsKey(Common.DICTIONARY))
 			Logger.error("NO DICTIONARY SET");
 
@@ -19,7 +21,7 @@ public class Dictionary extends ModuleImpl {
 			tail.add(new File(options.get(Common.DICTIONARY))
 					.getCanonicalPath());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+
 			Logger.error(e.getMessage());
 		}
 		return super.run();

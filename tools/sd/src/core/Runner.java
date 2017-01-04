@@ -20,7 +20,7 @@ public class Runner {
 
 	public List<String> runModule(Options options) {
 		IModule module = ModuleFactory.getModule(options.getModule());
-		System.out.println(options.getModule());
+		
 		for (Entry<String, String> entry : options.getOptions().entrySet()) {
 			module.setValue(entry.getKey(), entry.getValue());
 		}

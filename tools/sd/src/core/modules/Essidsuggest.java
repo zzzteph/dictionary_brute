@@ -66,7 +66,7 @@ public class Essidsuggest extends ModuleImpl {
 	}
 
 	public List<String> run() {
-		System.out.println("ESSID Suggester run");
+		Logger.info("ESSID Suggester working...");
 		init();
 		HashSet<String> words = new HashSet<String>();
 		String ESSID = this.parseHCCAPFile(CommandLine.getInstance().getOption(

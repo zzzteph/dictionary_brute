@@ -12,4 +12,5 @@ public interface IModule {
 
 	public String getValue(String key);
 
+	boolean checkOptions();
 }

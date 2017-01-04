@@ -1,6 +1,8 @@
 package core;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +32,38 @@ public abstract class ModuleImpl implements IModule {
 
 	}
 
+	public final boolean checkOptions() {
+		// check exec file
+		if (!Utils.checkFileExist(options.get(Common.EXEC))) {
+			Logger.warning(Common.EXEC + " not exists");
+			return false;
+		}
+		if (!Utils.checkFileExist(options.get(Common.WORKFILE))) {
+			Logger.warning(Common.WORKFILE + " not exists");
+			return false;
+		}
+
+		// check needfull data
+
+		if (options.containsKey(Common.RULES)) {
+			if (!Utils.checkFileExist(options.get(Common.RULES))) {
+				Logger.warning(Common.RULES + " not exists");
+				return false;
+			}
+		}
+		//check dictionary
+		if (options.containsKey(Common.DICTIONARY)) {
+			if (!Utils.checkFileExist(options.get(Common.DICTIONARY))) {
+				Logger.warning(Common.DICTIONARY + " not exists");
+				return false;
+			}
+		}
+		
+		
+
+		return true;
+	}
+
 	public List<String> run() {
 		ProcessBuilder command = new ProcessBuilder();
 		List<String> cmd = new ArrayList<String>();
@@ -49,14 +83,22 @@ public abstract class ModuleImpl implements IModule {
 		for (String addOptions : tail) {
 			cmd.add(addOptions);
 		}
-		System.out.println("Command" + cmd.toString());
+		checkOptions();
+		Logger.debug("Command" + cmd.toString());
 
 		try {
 			command = new ProcessBuilder(cmd);
 			process = command.start();
-			
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			String line;
+			while ((line = in.readLine()) != null) {
+				Logger.debug(line);
+			}
 			int exitVal = process.waitFor();
-			System.out.println("Process exited with value:" + exitVal);
+
+			in.close();
+			Logger.debug("Process exited with value:" + exitVal);
 		} catch (IOException e) {
 			Logger.error(e.getMessage());
 		} catch (InterruptedException e) {

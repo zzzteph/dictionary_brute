@@ -151,7 +151,6 @@ public class Keyboard extends ModuleImpl {
 			}
 		}
 
-		System.out.println(merged.size());
 
 	}
 
@@ -172,7 +171,7 @@ public class Keyboard extends ModuleImpl {
 			runExternal();
 			size = 0;
 			Utils.deleteFile( Utils.getTMPFile());
-			System.out.println("DELETED");
+			Logger.debug("DELETED");
 			try {
 				writer = new PrintWriter( Utils.getTMPFile(), "UTF-8");
 			} catch (FileNotFoundException e) {
@@ -231,7 +230,7 @@ public class Keyboard extends ModuleImpl {
 					if (tmp.policyCheck() != false)
 						continue;
 
-			//	System.out.println(tmp.getPassword());
+			//	Logger.debug(tmp.getPassword());
 				makeDictionary(tmp.getPassword());
 
 			}
@@ -373,7 +372,7 @@ public class Keyboard extends ModuleImpl {
 	}
 
 	public List<String> run() {
-
+		Logger.info("Keyboard working...");
 		String type = KeyboardConfig.LINE;
 		Integer parts = 3;
 		Integer length = 3;
@@ -412,9 +411,6 @@ public class Keyboard extends ModuleImpl {
 			passwords.add(new Part(tmp));
 		}
 		merged.clear();
-		System.out.println(Double.valueOf(
-				Math.pow(passwords.size(), length + 1)).intValue());
-
 		generate(passwords, new Part(), length);
 		runExternal();
 		writer.close();

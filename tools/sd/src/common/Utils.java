@@ -100,7 +100,7 @@ public class Utils {
 			int i = 0;
 			for (String uncrackedPasswords : file) {
 				if (crackedPasswords.contains(uncrackedPasswords)) {
-					System.out.println(crackedPasswords);
+					Logger.debug(crackedPasswords);
 					file.remove(i);
 					break;
 				}
@@ -119,7 +119,7 @@ public class Utils {
 			int i = 0;
 			for (String uncrackedPasswords : file) {
 				if (crackedPasswords.contains(uncrackedPasswords)) {
-					System.out.println(crackedPasswords);
+					Logger.debug(crackedPasswords);
 					file.remove(i);
 					break;
 				}
@@ -135,13 +135,15 @@ public class Utils {
 		HashSet<String> temp = new HashSet<String>();
 		BufferedReader br = null;
 		try {
-			br = new BufferedReader(new FileReader(file));
-			String line;
-			while ((line = br.readLine()) != null) {
-				if (!temp.contains(line))
-					temp.add(line);
+			if (checkFileExist(file)) {
+				br = new BufferedReader(new FileReader(file));
+				String line;
+				while ((line = br.readLine()) != null) {
+					if (!temp.contains(line))
+						temp.add(line);
+				}
+				br.close();
 			}
-			br.close();
 		} catch (FileNotFoundException ex) {
 			Logger.info(ex.getMessage());
 		} catch (IOException ex) {
@@ -239,13 +241,11 @@ public class Utils {
 
 	public String MD5(String md5) {
 		try {
-			java.security.MessageDigest md = java.security.MessageDigest
-					.getInstance("MD5");
+			java.security.MessageDigest md = java.security.MessageDigest.getInstance("MD5");
 			byte[] array = md.digest(md5.getBytes());
 			StringBuffer sb = new StringBuffer();
 			for (int i = 0; i < array.length; ++i) {
-				sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100)
-						.substring(1, 3));
+				sb.append(Integer.toHexString((array[i] & 0xFF) | 0x100).substring(1, 3));
 			}
 			return sb.toString();
 		} catch (java.security.NoSuchAlgorithmException e) {
@@ -256,21 +256,11 @@ public class Utils {
 
 	public static DocumentBuilder getDocumentBuilder() {
 		try {
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory
-					.newInstance();
-			dbFactory.setFeature(
-					"http://apache.org/xml/features/disallow-doctype-decl",
-					true);
-			dbFactory.setFeature(
-					"http://xml.org/sax/features/external-general-entities",
-					false);
-			dbFactory.setFeature(
-					"http://xml.org/sax/features/external-parameter-entities",
-					false);
-			dbFactory
-					.setFeature(
-							"http://apache.org/xml/features/nonvalidating/load-external-dtd",
-							false);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+			dbFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+			dbFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+			dbFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 			dbFactory.setXIncludeAware(false);
 			dbFactory.setExpandEntityReferences(false);
 			return dbFactory.newDocumentBuilder();
@@ -297,8 +287,8 @@ public class Utils {
 		for (Map.Entry<String, String> entry : leet.entrySet()) {
 			ret.add(str.replace(entry.getKey(), entry.getValue()));
 			ret.add(str.replace(entry.getKey().toUpperCase(), entry.getValue()));
-			ret.add(str.replace(entry.getKey(), entry.getValue()).replace(
-					entry.getKey().toUpperCase(), entry.getValue()));
+			ret.add(str.replace(entry.getKey(), entry.getValue()).replace(entry.getKey().toUpperCase(),
+					entry.getValue()));
 		}
 
 		for (Map.Entry<String, String> entry : leet.entrySet()) {
@@ -313,8 +303,8 @@ public class Utils {
 		for (Map.Entry<String, String> entry : leet.entrySet()) {
 			ret.add(str.replace(entry.getKey(), entry.getValue()));
 			ret.add(str.replace(entry.getKey().toUpperCase(), entry.getValue()));
-			ret.add(str.replace(entry.getKey(), entry.getValue()).replace(
-					entry.getKey().toUpperCase(), entry.getValue()));
+			ret.add(str.replace(entry.getKey(), entry.getValue()).replace(entry.getKey().toUpperCase(),
+					entry.getValue()));
 		}
 
 		for (Map.Entry<String, String> entry : leet.entrySet()) {
@@ -325,6 +315,15 @@ public class Utils {
 
 		ret.add(temp);
 		return ret;
+	}
+
+	public static boolean checkFileExist(String path) {
+		File f = new File(path);
+		if (f.exists() && !f.isDirectory()) {
+			return true;
+		}
+
+		return false;
 	}
 
 }

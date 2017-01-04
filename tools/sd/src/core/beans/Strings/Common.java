@@ -2,6 +2,9 @@ package core.beans.Strings;
 
 public interface Common {
 
+	public static final String DEBUG = "DEBUG";// is debug enabled
+	
+	
 	public static final String CONFIG = "CONFIG";// path to config folder
 
 	public static final String MODULE = "MODULE";

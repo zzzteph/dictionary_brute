@@ -23,13 +23,13 @@ public class main {
 
 	static void printOptions() {
 		global = CommandLine.getInstance();
-		System.out.println("INPUT:" + global.getOption(Common.INPUT));
-		System.out.println("OUTPUT:" + global.getOption(Common.OUTPUT));
-		System.out.println("TMP:" + global.getOption(Common.TMP));
-		System.out.println("CONFIG:" + global.getOption(Common.CONFIG));
-		System.out.println("MODULE:" + global.getOption(Common.MODULE));
-		System.out.println("EXEC_STAGE:" + global.getOption(Common.EXEC_STAGE));
-		System.out.println("INPUT_WORK_FILE:"
+		Logger.debug("INPUT:" + global.getOption(Common.INPUT));
+		Logger.debug("OUTPUT:" + global.getOption(Common.OUTPUT));
+		Logger.debug("TMP:" + global.getOption(Common.TMP));
+		Logger.debug("CONFIG:" + global.getOption(Common.CONFIG));
+		Logger.debug("MODULE:" + global.getOption(Common.MODULE));
+		Logger.debug("EXEC_STAGE:" + global.getOption(Common.EXEC_STAGE));
+		Logger.debug("INPUT_WORK_FILE:"
 				+ global.getOption(Common.WORKFILE));
 	}
 
@@ -42,7 +42,6 @@ public class main {
 			Logger.error("No module with stage rules set");
 
 
-		// rebuilding full pathe's
 		try {
 			global.add(Common.INPUT, new File(global.getOption(Common.INPUT))
 					.getCanonicalPath().toString());
@@ -74,7 +73,7 @@ public class main {
 
 	static void loadConfig(String configPath) {
 
-		System.out.println(configPath);
+		Logger.debug(configPath);
 		global = CommandLine.getInstance();
 		if (configPath == null)
 			configPath = "config";
@@ -138,6 +137,12 @@ public class main {
 					i++;
 				}
 			}
+			else if (("-d").equals(args[i]) || ("--debug").equals(args[i])) {
+		
+					global.add(Common.DEBUG, "true");
+					i++;
+
+			}
 
 			else {
 				if (global.getOption(Common.INPUT) == null) {
@@ -162,7 +167,7 @@ public class main {
 			}
 
 			for (String cracked : Runner.getInstance().runModule(ModuleStage)) {
-				System.out.println(cracked);
+				Logger.info(cracked);
 				result.add(cracked);
 				out.println(cracked);
 
@@ -188,15 +193,13 @@ public class main {
 							.equalsIgnoreCase("8800")
 					|| CommandLine.getInstance().getOption(Common.MODULE)
 							.equalsIgnoreCase("9000")) {
-				// nothing to do
+				break;
 			} else {
 				Utils.rebuildInputFile(result, CommandLine.getInstance()
 						.getOption(Common.WORKFILE));
 			}
-			System.out.println("REBUILDED");
-
 		}
-		System.out.println("Cleared");
+
 		Utils.deleteFile(global.getOption(Common.WORKFILE));
 		Utils.deleteFile(global.getOption(Common.TMP));
 
